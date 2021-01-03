@@ -216,7 +216,6 @@ int		deal_cmd(t_command **commands)
 	cmd = *commands;
 	while(cmd)
 	{
-		//printf("%s\n", cmd->words[1]);
 		if (cmd->size)
 		{
 			if (pipefd)
@@ -241,10 +240,12 @@ int		main(void)
 	t_list *lex;
 	t_command *commands;
 	int old_stdin;
+	int	old_stdout;
 
 	while (1)
 	{
 		old_stdin = dup(0);
+		old_stdin = dup(1);
 		ft_putstr_fd("miniwouf > ", 1);
 		err = get_next_line(0, &line);
 		get_lex(line, &lex);
@@ -255,6 +256,7 @@ int		main(void)
 		deal_cmd(&commands);
 		clean_commands(&commands);
 		dup2(old_stdin, 0);
+		dup2(old_stdout, 1);
 	}
 
 }
