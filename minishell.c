@@ -38,23 +38,20 @@ int		how_to_open(char *redir, char *file)
 		return (open(file, O_WRONLY | O_APPEND | O_CREAT, 0777));
 }
 
-int		deal_redirection(int *pipefd, t_command *cmd)
+void	deal_redirection(int *pipefd, t_command *cmd, int fd_open)
 {
-	int fd_open;
-
 	if (!ft_strcmp(cmd->end_command, "PIPE"))
 	{
 		close(pipefd[0]); /* close the unused read side */
 		dup2(pipefd[1], 1); /* connect the write side with stdout */
 		close(pipefd[1]); /* close the write side */
-		return (1);
+		return ;
 	}
-	fd_open = how_to_open(cmd->end_command, cmd->next->words[0]);
 	if (!ft_strcmp(cmd->end_command, "LOWER") &&  fd_open > 0)
 		dup2(fd_open, 0);
 	else if (fd_open > 0)
 		dup2(fd_open, 1);
-	return (fd_open);
+	return ;
 }
 
 void	fork_exec(char *bin, t_command *cmd, int *pipefd)
@@ -62,14 +59,16 @@ void	fork_exec(char *bin, t_command *cmd, int *pipefd)
 	int fd_open;
 
 	fd_open = 1;
-	if (is_redirection_cmd(cmd->end_command) || !ft_strcmp(cmd->end_command, "PIPE"))
-		fd_open = deal_redirection(pipefd, cmd);
+	if (is_redirection_cmd(cmd->end_command))
+		fd_open = how_to_open(cmd->end_command, cmd->next->words[0]);
 	if (fd_open < 0)
 	{
 		ft_putstr_fd(cmd->next->words[0], 0);
 		ft_putstr_fd(": No such file or directory\n", 0);
 		return ;
 	}
+	if (is_redirection_cmd(cmd->end_command) || !ft_strcmp(cmd->end_command, "PIPE"))
+		deal_redirection(pipefd, cmd, fd_open);
 	if (execve(bin, cmd->words, environ) < 0)
 	{
 		ft_putstr_fd(strerror(errno), 0);
