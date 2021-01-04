@@ -3,11 +3,14 @@
 void	add_back_normal_word(char* start, int size, t_list **lex)
 {
 	char *token;
+	t_list *new_elem;
 
 	token = malloc(size + 2);
 	token[0] = ':';
 	ft_strlcpy(token + 1, start, size + 1);
-	ft_lstadd_back(lex, ft_lstnew(token));
+	new_elem = ft_lstnew(token);
+	new_elem->next = NULL;
+	ft_lstadd_back(lex, new_elem);
 }
 
 void	deal_word(char *line, int *head_ptr, t_list **lex)
@@ -46,6 +49,7 @@ void	get_lex(char *line, t_list **lex)
 	head = 0;
 	quotes[0] = 0;
 	quotes[1] = 0;
+	*lex = ft_lstnew(ft_strdup("START"));
 	while (head < ft_strlen(line))
 	{
 		if (quotes[0] || quotes[1])

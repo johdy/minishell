@@ -25,12 +25,30 @@ void	deal_quotes(char *line, int *head_ptr, int *quotes, t_list **lex);
 void	deal_cmp(char *line, int *head_ptr, t_list **lex);
 void	deal_pipe_sc(char *line, int *head_ptr, t_list **lex);
 void	add_back_normal_word(char* start, int size, t_list **lex);
-void	get_commands(t_list *lex, t_command **commands);
 void	clean_commands(t_command **cmds);
 void	clean_path(char **path);
 char	**get_path(void);
 char	**ft_split_path(char *str, char c);
 char	*get_bin(char *cmd, char **path);
+int		*execute_cmd(t_command *cmd);
+int		is_builtin(char *cmd);
+int		*exec_builtin(t_command *cmd);
+
+//Get_commands
+void	get_commands(t_list *lex, t_command **commands);
+int		*get_stickits_nb(t_list *first, int size);
+int		*get_quotes_nb(t_list *first, int size);
+int		is_q_dq_st(char *tok, int quote, int dquote, int stickit);
+
+//Redirections
+
+int		how_to_open(char *redir, char *file);
+void	deal_redirection(int *pipefd, t_command *cmd, int fd_open);
+
+//Sticking
+
+void	stick_words(t_command *cmd);
+void	lookfor_envvar(t_command *cmd);
 
 //Utils
 

@@ -1,5 +1,16 @@
 #include "minishell.h"
 
+int		is_q_dq_st(char *tok, int quote, int dquote, int stickit)
+{
+	if (quote && !ft_strcmp(tok, "QUOTE"))
+		return (1);
+	if (dquote && !ft_strcmp(tok, "DQUOTE"))
+		return (1);
+	if (stickit && !ft_strcmp(tok, "STICKIT"))
+		return (1);
+	return (0);
+}
+
 char	**comm_words_table(t_list *first, int size)
 {
 	char **ret;
@@ -9,7 +20,7 @@ char	**comm_words_table(t_list *first, int size)
 	ret = malloc(sizeof(char*) * (size + 1));
 	while (i < size)
 	{
-		if (ft_strcmp((char*)first->content, "QUOTE") && ft_strcmp((char*)first->content, "DQUOTE") && ft_strcmp((char*)first->content, "STICKIT"))
+		if (!is_q_dq_st((char*)first->content, 1, 1, 1))
 			ret[i++] = ft_strdup((char*)first->content + 1);
 		first = first->next;
 	}
@@ -17,7 +28,7 @@ char	**comm_words_table(t_list *first, int size)
 	return (ret);
 }
 
-int		*fill_quotes(int nb, t_list *first)
+/*int		*fill_quotes(int nb, t_list *first)
 {
 	int *ret;
 	int i;
@@ -44,94 +55,40 @@ int		*fill_quotes(int nb, t_list *first)
 	ret[i] = -1;
 	return (ret);
 
-}
+}*/
 
-int		*get_quotes_nb(t_list *first, int size)
+t_list	*get_comm_infos(t_command **comm_addr, t_list *lex)
 {
-	int i;
-	int *ret;
+	t_command	*comm;
+	t_list		*first;
 
-	ret = malloc(sizeof(int) * (size + 1));
-	i = 0;
-	while (!is_end_command((char *)first->content))
+	comm = *comm_addr;
+	comm->size = 0;
+	first = lex;
+	while (!is_end_command((char *)lex->content))
 	{
-		if (!ft_strcmp((char*)first->content, "QUOTE"))
-		{
-			ret[i++] = 1;
-			first = first->next->next->next;
-		}
-		else if (!ft_strcmp((char*)first->content, "DQUOTE"))
-		{
-			ret[i++] = 0;
-			first = first->next->next->next;
-		}
-		else if (!ft_strcmp((char*)first->content, "STICKIT"))
-			first = first->next;
-		else
-		{	
-			ret[i++] = 0;
-			first = first->next;
-		}
+		if (!is_q_dq_st((char*)lex->content, 1, 1, 1))
+			comm->size++;
+		lex = lex->next;
 	}
-	ret[i] = -1;
-	return (ret);
-}
-
-int		*get_stickits_nb(t_list *first, int size)
-{
-	int i;
-	int *ret;
-
-	ret = malloc(sizeof(int) * (size + 1));
-	i = 0;
-	while (!is_end_command((char *)first->content))
-	{
-		if (!ft_strcmp((char*)first->content, "QUOTE"))
-		{
-			ret[i++] = 0;
-			first = first->next->next->next;
-		}
-		else if (!ft_strcmp((char*)first->content, "DQUOTE"))
-		{
-			ret[i++] = 0;
-			first = first->next->next->next;
-		}
-		else if (!ft_strcmp((char*)first->content, "STICKIT"))
-		{
-			ret[i - 1] = 1;
-			first = first->next;
-		}
-		else
-		{	
-			ret[i++] = 0;
-			first = first->next;
-		}
-	}
-	ret[i] = -1;
-	return (ret);
+	comm->stickits = get_stickits_nb(first, comm->size);
+	comm->quotes = get_quotes_nb(first, comm->size);
+	comm->words = comm_words_table(first, comm->size);
+	return (lex);
 }
 
 void	get_commands(t_list *lex, t_command **commands)
 {
 	t_command	*comm;
 	t_command	*next_comm;
-	t_list		*first;
 	int			stickit;
+	
 	comm = malloc(sizeof(t_command));
 	*commands = comm;
+	lex = lex->next;
 	while (lex)
 	{
-		comm->size = 0;
-		first = lex;
-		while (!is_end_command((char *)lex->content))
-		{
-			if (ft_strcmp((char*)lex->content, "QUOTE") && ft_strcmp((char*)lex->content, "DQUOTE") && ft_strcmp((char*)lex->content, "STICKIT"))
-				comm->size++;
-			lex = lex->next;
-		}
-		comm->stickits = get_stickits_nb(first, comm->size);
-		comm->quotes = get_quotes_nb(first, comm->size);
-		comm->words = comm_words_table(first, comm->size);
+		lex = get_comm_infos(&comm, lex);
 		comm->end_command = ft_strdup((char *)lex->content);
 		if (lex->next)
 		{
