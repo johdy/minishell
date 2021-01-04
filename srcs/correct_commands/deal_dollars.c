@@ -9,12 +9,17 @@ int		delete_word(t_command *cmd, int i)
 	{
 		free(cmd->words[i + cpt]);
 		cmd->words[i + cpt] = ft_strdup(cmd->words[i + cpt + 1]);
+		cmd->stickits[i + cpt] = cmd->stickits[i + cpt + 1];
+		cmd->quotes[i + cpt] = cmd->quotes[i + cpt + 1];
 		cpt++;
 	}
 	free(cmd->words[i + cpt]);
 	free(cmd->words[i + cpt + 1]);
 	cmd->words[i + cpt] = NULL;
+	cmd->stickits[i + cpt] = -1;
+	cmd->quotes[i + cpt] = -1;
 	cmd->size--;
+	display_commands(&cmd);
 	return (-1);
 }
 

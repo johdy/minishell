@@ -35,7 +35,7 @@ void	stick_words(t_command *cmd)
 	i = 0;
 	while (cmd->stickits[i] != - 1)
 	{
-		if (cmd->stickits[i])
+		if (cmd->stickits[i] && i < cmd->size - 1)
 			offset += stickem(cmd, i - offset);
 		i++;
 	}
