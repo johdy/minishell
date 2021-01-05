@@ -31,8 +31,6 @@ char	**get_path(void);
 char	**ft_split_path(char *str, char c);
 char	*get_bin(char *cmd, char **path);
 int		*execute_cmd(t_command *cmd);
-int		is_builtin(char *cmd);
-int		*exec_builtin(t_command *cmd);
 
 //Get_commands
 void	get_commands(t_list *lex, t_command **commands);

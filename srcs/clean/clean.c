@@ -15,6 +15,7 @@ void	clean_commands(t_command **cmds)
 		free(cmd->words);
 		free(cmd->end_command);
 		free(cmd->quotes);
+		free(cmd->stickits);
 		cache = cmd->next;
 		free(cmd);
 		cmd = cache;

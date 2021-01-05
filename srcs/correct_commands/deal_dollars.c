@@ -19,7 +19,6 @@ int		delete_word(t_command *cmd, int i)
 	cmd->stickits[i + cpt] = -1;
 	cmd->quotes[i + cpt] = -1;
 	cmd->size--;
-	display_commands(&cmd);
 	return (-1);
 }
 

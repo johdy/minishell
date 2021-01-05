@@ -4,30 +4,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-int		is_builtin(char *cmd)
-{
-	if (!ft_strcmp(cmd, "cd"))
-		return (1);
-	if (!ft_strcmp(cmd, "cd"))
-		return (1);
-	if (!ft_strcmp(cmd, "pwd"))
-		return (1);
-	if (!ft_strcmp(cmd, "export"))
-		return (1);
-	if (!ft_strcmp(cmd, "unset"))
-		return (1);
-	if (!ft_strcmp(cmd, "env"))
-		return (1);
-	if (!ft_strcmp(cmd, "exit"))
-		return (1);
-	return (0);
-}
-
-int		*exec_builtin(t_command *cmd)
-{
-	return (NULL);
-}
-
 int		deal_cmd(t_command **commands)
 {
 	t_command *cmd;
@@ -67,18 +43,20 @@ int		main(void)
 	while (1)
 	{
 		old_stdin = dup(0);
-		old_stdin = dup(1);
+		old_stdout = dup(1);
+		//printf("%d %d\n", old_stdin, old_stdout);
 		ft_putstr_fd("miniwouf > ", 1);
 		err = get_next_line(0, &line);
 		get_lex(line, &lex);
-	//	display_lex(&lex);
+		//display_lex(&lex);
 		get_commands(lex, &commands);
-		display_commands(&commands);
+		//display_commands(&commands);
 		ft_lstclear(&lex, &free);
 		deal_cmd(&commands);
 		clean_commands(&commands);
 		dup2(old_stdin, 0);
 		dup2(old_stdout, 1);
+		close(old_stdin);
+		close(old_stdout);
 	}
-
 }
