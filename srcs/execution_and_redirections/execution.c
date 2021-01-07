@@ -4,7 +4,7 @@ int		is_builtin(char *cmd)
 {
 	if (!ft_strcmp(cmd, "cd"))
 		return (1);
-	if (!ft_strcmp(cmd, "cd"))
+	if (!ft_strcmp(cmd, "echo"))
 		return (1);
 	if (!ft_strcmp(cmd, "pwd"))
 		return (1);
@@ -19,9 +19,14 @@ int		is_builtin(char *cmd)
 	return (0);
 }
 
-int		*exec_builtin(t_command *cmd)
-{
-	return (NULL);
+void	exec_builtin(t_command *cmd)
+{	
+	if (!ft_strcmp(cmd->words[0], "echo"))
+		ft_echo(cmd);
+	if (!ft_strcmp(cmd->words[0], "cd"))
+		ft_cd(cmd);
+	if (!ft_strcmp(cmd->words[0], "pwd"))
+		ft_pwd(cmd);
 }
 
 void	fork_exec(char *bin, t_command *cmd, int *pipefd)
@@ -33,15 +38,17 @@ void	fork_exec(char *bin, t_command *cmd, int *pipefd)
 		fd_open = how_to_open(cmd->end_command, cmd->next->words[0]);
 	if (fd_open < 0)
 	{
-		ft_putstr_fd(cmd->next->words[0], 0);
-		ft_putstr_fd(": No such file or directory\n", 0);
+		ft_putstr_fd(strerror(errno), 1);
+		ft_putstr_fd("\n", 0);
 		return ;
 	}
 	if (is_redirection_cmd(cmd->end_command) || !ft_strcmp(cmd->end_command, "PIPE"))
 		deal_redirection(pipefd, cmd, fd_open);
-	if (execve(bin, cmd->words, environ) < 0)
+	if (is_builtin(cmd->words[0]))
+		exec_builtin(cmd);
+	else if (execve(bin, cmd->words, environ) < 0)
 	{
-		ft_putstr_fd(strerror(errno), 0);
+		ft_putstr_fd(strerror(errno), 1);
 		ft_putstr_fd("\n", 0);
 	}
 }
@@ -54,15 +61,12 @@ int		*execute_cmd(t_command *cmd)
 	char *bin;
 	int *pipefd;
 
-	pipefd = malloc(sizeof(int) * 2);
 	path = get_path();
-	lookfor_envvar(cmd);
-	stick_words(cmd);
+	correct_cmd(cmd);
 //	printf("again.\n");
 //	display_commands(&cmd);
-	if (is_builtin(cmd->words[0]))
-		return (exec_builtin(cmd));
 	bin = get_bin(cmd->words[0], path);
+	pipefd = malloc(sizeof(int) * 2);
 	pipe(pipefd);
 	p_pid = fork();
 	if (p_pid == 0)

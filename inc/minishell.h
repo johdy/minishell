@@ -39,22 +39,26 @@ int		*get_quotes_nb(t_list *first, int size);
 int		is_q_dq_st(char *tok, int quote, int dquote, int stickit);
 
 //Redirections
-
 int		how_to_open(char *redir, char *file);
 void	deal_redirection(int *pipefd, t_command *cmd, int fd_open);
 
-//Sticking
+//Builtins
+void	ft_echo(t_command *cmd);
+void	ft_cd(t_command *cmd);
+void	ft_pwd(t_command *cmd);
 
+//Correct
+void	correct_cmd(t_command *cmd);
 void	stick_words(t_command *cmd);
 void	lookfor_envvar(t_command *cmd);
 
 //Utils
-
 int		is_end_command(char *token);
 int		is_redirection_cmd(char *token);
 void	display_commands(t_command **commands);
 void	display_lex(t_list **lex);
 int		ft_strcmp(char *s1, char *s2);
+int		fetch_env(char *id);
 
 extern char **environ;
 #endif
