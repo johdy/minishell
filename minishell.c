@@ -20,7 +20,8 @@ int		deal_cmd(t_command **commands)
 			{
 				close(pipefd[1]);
 				dup2(pipefd[0], 0);
-				close(pipefd[0]);				
+				close(pipefd[0]);
+				free(pipefd);		
 			}
 			pipefd = execute_cmd(cmd);
 		}
@@ -58,5 +59,6 @@ int		main(void)
 		dup2(old_stdout, 1);
 		close(old_stdin);
 		close(old_stdout);
+		exit(0);
 	}
 }

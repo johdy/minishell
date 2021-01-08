@@ -29,4 +29,6 @@ void	clean_path(char **path)
 	i = 0;
 	while (path && path[i])
 		free(path[i++]);
+	if (path)
+		free(path);
 }

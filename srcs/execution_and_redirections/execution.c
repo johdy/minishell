@@ -77,5 +77,6 @@ int		*execute_cmd(t_command *cmd)
 	free(bin);
 	if (!ft_strcmp(cmd->end_command, "PIPE"))
 		return (pipefd);
+	free(pipefd);
 	return (NULL);
 }

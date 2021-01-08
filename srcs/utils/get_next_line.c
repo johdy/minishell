@@ -56,6 +56,8 @@ int	fill_line(char **reste, char *buf, char **line, int debug)
 	{
 		free(*reste);
 		*reste = f_strcpy(buf, get_chariot(buf) + 1, ft_strilen(buf));
+		if (ft_strilen(*reste) == 0)
+			free(*reste);
 	}
 	return (1);
 }
