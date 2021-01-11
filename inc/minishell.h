@@ -46,6 +46,7 @@ void	deal_redirection(int *pipefd, t_command *cmd, int fd_open);
 void	ft_echo(t_command *cmd);
 void	ft_cd(t_command *cmd);
 void	ft_pwd(t_command *cmd);
+void	ft_exit(t_command *cmd);
 
 //Correct
 void	correct_cmd(t_command *cmd);

@@ -1,5 +1,12 @@
 #include "minishell.h"
 
+void	ft_exit(t_command *cmd)
+{
+	clean_commands(&cmd);
+	printf("hello\n");
+	exit(0);
+}
+
 void	ft_pwd(t_command *cmd)
 {
 	char *cwd;

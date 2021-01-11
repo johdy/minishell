@@ -59,6 +59,6 @@ int		main(void)
 		dup2(old_stdout, 1);
 		close(old_stdin);
 		close(old_stdout);
-		exit(0);
+		//exit(0);
 	}
 }

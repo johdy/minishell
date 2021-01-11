@@ -27,6 +27,8 @@ void	exec_builtin(t_command *cmd)
 		ft_cd(cmd);
 	if (!ft_strcmp(cmd->words[0], "pwd"))
 		ft_pwd(cmd);
+	if (!ft_strcmp(cmd->words[0], "exit"))
+		ft_exit(cmd);
 }
 
 void	fork_exec(char *bin, t_command *cmd, int *pipefd)
@@ -44,6 +46,7 @@ void	fork_exec(char *bin, t_command *cmd, int *pipefd)
 	}
 	if (is_redirection_cmd(cmd->end_command) || !ft_strcmp(cmd->end_command, "PIPE"))
 		deal_redirection(pipefd, cmd, fd_open);
+	printf("hou\n");
 	if (is_builtin(cmd->words[0]))
 		exec_builtin(cmd);
 	else if (execve(bin, cmd->words, environ) < 0)
