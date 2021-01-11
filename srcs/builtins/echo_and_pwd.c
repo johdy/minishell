@@ -1,9 +1,9 @@
 #include "minishell.h"
 
-void	ft_exit(t_command *cmd)
+void	ft_exit(t_command *cmd, char **ms_environ)
 {
 	clean_commands(&cmd);
-	printf("hello\n");
+	clean_path(ms_environ);
 	exit(0);
 }
 

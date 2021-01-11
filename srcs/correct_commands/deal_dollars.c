@@ -45,7 +45,7 @@ int		is_envvar_ending(char c)
 	return (1);
 }
 
-int		replace_env(t_command *cmd, int i, int j)
+int		replace_env(t_command *cmd, int i, int j, char **ms_environ)
 {
 	int sizew;
 	int w;
@@ -56,21 +56,21 @@ int		replace_env(t_command *cmd, int i, int j)
 	while (!is_envvar_ending(cmd->words[i][j + sizew]) && cmd->words[i][j + sizew])
 		sizew++;
 	w = 0;
-	while (environ[w] && ft_strncmp(environ[w], cmd->words[i] + j, sizew))
+	while (ms_environ[w] && ft_strncmp(ms_environ[w], cmd->words[i] + j, sizew))
 		w++;
 	j--;
-	if (!environ[w])
+	if (!ms_environ[w])
 		return (0);
-	new_word = malloc(ft_strlen(cmd->words[i]) - (sizew + 1) + ft_strlen(environ[w]) - (sizew + 1) + 1);
+	new_word = malloc(ft_strlen(cmd->words[i]) - (sizew + 1) + ft_strlen(ms_environ[w]) - (sizew + 1) + 1);
 	ft_memcpy(new_word, cmd->words[i], j);
-	ft_memcpy(new_word + j, environ[w] + sizew + 1, ft_strlen(environ[w]) - (sizew + 1));
-	ft_strlcpy(new_word + j + ft_strlen(environ[w]) - (sizew + 1), cmd->words[i] + sizew + j + 1, ft_strlen(cmd->words[i]) - (sizew + 1) + 1);
+	ft_memcpy(new_word + j, ms_environ[w] + sizew + 1, ft_strlen(ms_environ[w]) - (sizew + 1));
+	ft_strlcpy(new_word + j + ft_strlen(ms_environ[w]) - (sizew + 1), cmd->words[i] + sizew + j + 1, ft_strlen(cmd->words[i]) - (sizew + 1) + 1);
 	free(cmd->words[i]);
 	cmd->words[i] = new_word;
 	return (1);
 }
 
-void	lookfor_envvar(t_command *cmd)
+void	lookfor_envvar(t_command *cmd, char **ms_environ)
 {
 	int i;
 	int j;
@@ -83,7 +83,7 @@ void	lookfor_envvar(t_command *cmd)
 		{
 			if (cmd->words[i][j] == '$' && !cmd->quotes[i])
 			{
-				if (!replace_env(cmd, i, j))
+				if (!replace_env(cmd, i, j, ms_environ))
 					j = suppress_wrong_env(cmd, i--, j);
 				j--;
 			}

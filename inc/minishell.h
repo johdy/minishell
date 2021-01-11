@@ -27,10 +27,10 @@ void	deal_pipe_sc(char *line, int *head_ptr, t_list **lex);
 void	add_back_normal_word(char* start, int size, t_list **lex);
 void	clean_commands(t_command **cmds);
 void	clean_path(char **path);
-char	**get_path(void);
+char	**get_path(char **ms_environ);
 char	**ft_split_path(char *str, char c);
 char	*get_bin(char *cmd, char **path);
-int		*execute_cmd(t_command *cmd);
+int		*execute_cmd(t_command *cmd, char **ms_environ);
 
 //Get_commands
 void	get_commands(t_list *lex, t_command **commands);
@@ -44,14 +44,16 @@ void	deal_redirection(int *pipefd, t_command *cmd, int fd_open);
 
 //Builtins
 void	ft_echo(t_command *cmd);
-void	ft_cd(t_command *cmd);
+void	ft_cd(t_command *cmd, char **ms_environ);
 void	ft_pwd(t_command *cmd);
-void	ft_exit(t_command *cmd);
+void	ft_exit(t_command *cmd, char **ms_environ);
+void	ft_env(t_command *cmd, char **ms_environ);
+void	ft_unset(t_command *cmd, char **ms_environ);
 
 //Correct
-void	correct_cmd(t_command *cmd);
+void	correct_cmd(t_command *cmd, char **ms_environ);
 void	stick_words(t_command *cmd);
-void	lookfor_envvar(t_command *cmd);
+void	lookfor_envvar(t_command *cmd, char **ms_environ);
 
 //Utils
 int		is_end_command(char *token);
@@ -59,7 +61,7 @@ int		is_redirection_cmd(char *token);
 void	display_commands(t_command **commands);
 void	display_lex(t_list **lex);
 int		ft_strcmp(char *s1, char *s2);
-int		fetch_env(char *id);
+int		fetch_env(char *id, char **ms_environ);
 
 extern char **environ;
 #endif

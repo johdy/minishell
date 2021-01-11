@@ -19,19 +19,24 @@ int		is_builtin(char *cmd)
 	return (0);
 }
 
-void	exec_builtin(t_command *cmd)
+void	exec_builtin(t_command *cmd, char **ms_environ)
 {	
 	if (!ft_strcmp(cmd->words[0], "echo"))
 		ft_echo(cmd);
 	if (!ft_strcmp(cmd->words[0], "cd"))
-		ft_cd(cmd);
+		ft_cd(cmd, ms_environ);
 	if (!ft_strcmp(cmd->words[0], "pwd"))
 		ft_pwd(cmd);
 	if (!ft_strcmp(cmd->words[0], "exit"))
-		ft_exit(cmd);
+		ft_exit(cmd, ms_environ);
+	if (!ft_strcmp(cmd->words[0], "env"))
+		ft_env(cmd, ms_environ);
+	if (!ft_strcmp(cmd->words[0], "unset"))
+		ft_unset(cmd, ms_environ);
+	exit(0);
 }
 
-void	fork_exec(char *bin, t_command *cmd, int *pipefd)
+void	fork_exec(char *bin, t_command *cmd, int *pipefd, char **ms_environ)
 {
 	int fd_open;
 
@@ -46,17 +51,16 @@ void	fork_exec(char *bin, t_command *cmd, int *pipefd)
 	}
 	if (is_redirection_cmd(cmd->end_command) || !ft_strcmp(cmd->end_command, "PIPE"))
 		deal_redirection(pipefd, cmd, fd_open);
-	printf("hou\n");
 	if (is_builtin(cmd->words[0]))
-		exec_builtin(cmd);
-	else if (execve(bin, cmd->words, environ) < 0)
+		exec_builtin(cmd, ms_environ);
+	else if (execve(bin, cmd->words, ms_environ) < 0)
 	{
 		ft_putstr_fd(strerror(errno), 1);
 		ft_putstr_fd("\n", 0);
 	}
 }
 
-int		*execute_cmd(t_command *cmd)
+int		*execute_cmd(t_command *cmd, char **ms_environ)
 {
 	pid_t p_pid;
 	int stt;
@@ -64,8 +68,8 @@ int		*execute_cmd(t_command *cmd)
 	char *bin;
 	int *pipefd;
 
-	path = get_path();
-	correct_cmd(cmd);
+	path = get_path(ms_environ);
+	correct_cmd(cmd, ms_environ);
 //	printf("again.\n");
 //	display_commands(&cmd);
 	bin = get_bin(cmd->words[0], path);
@@ -73,7 +77,7 @@ int		*execute_cmd(t_command *cmd)
 	pipe(pipefd);
 	p_pid = fork();
 	if (p_pid == 0)
-		fork_exec(bin, cmd, pipefd);
+		fork_exec(bin, cmd, pipefd, ms_environ);
 	else if (p_pid > 0)
 		waitpid(p_pid, &stt, 0);
 	clean_path(path);
@@ -81,5 +85,7 @@ int		*execute_cmd(t_command *cmd)
 	if (!ft_strcmp(cmd->end_command, "PIPE"))
 		return (pipefd);
 	free(pipefd);
+	if (!ft_strcmp(cmd->words[0], "exit"))
+		ft_exit(cmd, ms_environ);
 	return (NULL);
 }

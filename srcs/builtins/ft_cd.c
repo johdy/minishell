@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		change_directory(t_command *cmd, char *old_dirname)
+int		change_directory(t_command *cmd, char *old_dirname, char **ms_environ)
 {
 	if (cmd->size > 2)
 	{
@@ -8,8 +8,8 @@ int		change_directory(t_command *cmd, char *old_dirname)
 		free(old_dirname);
 		return (0);
 	}
-	if (cmd->size == 1 && environ[fetch_env("HOME=")])
-		chdir(environ[fetch_env("HOME=")] + 5);
+	if (cmd->size == 1 && ms_environ[fetch_env("HOME=", ms_environ)])
+		chdir(ms_environ[fetch_env("HOME=", ms_environ)] + 5);
 	else if (chdir(cmd->words[1]))
 	{
 		ft_putstr_fd("cd: no such file or directory: ", 1);
@@ -21,29 +21,32 @@ int		change_directory(t_command *cmd, char *old_dirname)
 	return (1);
 }
 
-void	update_env(char *new_val, char *id)
+void	update_env(char *new_val, char **ms_environ, char *id)
 {
 	int i;
 	char *new_env;
 
-	i = fetch_env(id);
-	if (!environ[i])
+	i = fetch_env(id, ms_environ);
+	if (!ms_environ[i])
 		return ;
 	new_env = ft_strjoin(id, new_val);
-	environ[i] = new_env;
+	free(ms_environ[i]);
+	ms_environ[i] = new_env;
 }
 
-void	ft_cd(t_command *cmd)
+void	ft_cd(t_command *cmd, char **ms_environ)
 {
 	char *dirname;
 	char *old_dirname;
 
 	old_dirname = getcwd(NULL, 0);
-	if (!change_directory(cmd, old_dirname))
+	chdir("/Users");
+	return ;
+	if (!change_directory(cmd, old_dirname, ms_environ))
 		return ;
 	dirname = getcwd(NULL, 0);
-	update_env(old_dirname, "OLDPWD=");
+	update_env(old_dirname, ms_environ, "OLDPWD=");
 	free(old_dirname);
-	update_env(dirname, "PWD=");
+	update_env(dirname, ms_environ, "PWD=");
 	free(dirname);
 }

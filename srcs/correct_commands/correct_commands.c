@@ -49,16 +49,16 @@ t_command	*correct_multiple_arg_redir(t_command *cmd, t_command *cmd2)
 	return (cmd2);
 }
 
-void	correct_cmd(t_command *cmd)
+void	correct_cmd(t_command *cmd, char **ms_environ)
 {
 	t_command *cmd2;
 
-	lookfor_envvar(cmd);
+	lookfor_envvar(cmd, ms_environ);
 	stick_words(cmd);
 	cmd2 = cmd->next;
 	while (cmd2 && is_redirection_cmd(cmd->end_command))
 	{
-		lookfor_envvar(cmd2);
+		lookfor_envvar(cmd2, ms_environ);
 		stick_words(cmd2);
 		if (cmd2->size > 1)
 			cmd = correct_multiple_arg_redir(cmd, cmd2);

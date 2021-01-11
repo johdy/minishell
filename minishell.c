@@ -4,7 +4,29 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-int		deal_cmd(t_command **commands)
+char	**init_env(void)
+{
+	char **ret;
+	int size;
+	int i;
+
+	i = 0;
+	size = 0;
+	while(environ[size])
+		size++;
+	ret = malloc(sizeof(char*) * (size + 1));
+	while (i < size)
+	{
+		ret[i] = ft_strdup(environ[i]);
+		i++;
+	}
+	i = 0;
+	while(i < size)
+		printf("%s\n", ret[i++]);
+	return (ret);
+}
+
+int		deal_cmd(t_command **commands, char **ms_environ)
 {
 	t_command *cmd;
 	int *pipefd;
@@ -23,7 +45,9 @@ int		deal_cmd(t_command **commands)
 				close(pipefd[0]);
 				free(pipefd);		
 			}
-			pipefd = execute_cmd(cmd);
+			printf("yo\n");
+			pipefd = execute_cmd(cmd, ms_environ);
+			printf("%d printf%d\n", pipefd[0], pipefd[1]);
 		}
 		if (is_redirection_cmd(cmd->end_command))
 			cmd = cmd->next;
@@ -40,7 +64,9 @@ int		main(void)
 	t_command *commands;
 	int old_stdin;
 	int	old_stdout;
+	char	**ms_environ;
 
+	ms_environ = init_env();
 	while (1)
 	{
 		old_stdin = dup(0);
@@ -53,7 +79,7 @@ int		main(void)
 		get_commands(lex, &commands);
 		//display_commands(&commands);
 		ft_lstclear(&lex, &free);
-		deal_cmd(&commands);
+		deal_cmd(&commands, ms_environ);
 		clean_commands(&commands);
 		dup2(old_stdin, 0);
 		dup2(old_stdout, 1);

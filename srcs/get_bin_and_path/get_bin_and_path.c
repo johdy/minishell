@@ -1,15 +1,15 @@
 #include "minishell.h"
 
-char	**get_path(void)
+char	**get_path(char **ms_environ)
 {
 	int i;
 	char **path;
 	char *first_path;
 
 	i = 0;
-	while (environ[i] && ft_strncmp(environ[i], "PATH=", 5))
+	while (ms_environ[i] && ft_strncmp(ms_environ[i], "PATH=", 5))
 		i++;
-	path = ft_split_path(environ[i], ':');
+	path = ft_split_path(ms_environ[i], ':');
 	first_path = ft_substr(path[0], 5, ft_strlen(path[0]) - 5);
 	free(path[0]);
 	path[0] = first_path;
