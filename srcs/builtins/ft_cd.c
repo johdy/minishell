@@ -10,6 +10,8 @@ int		change_directory(t_command *cmd, char *old_dirname, char **ms_environ)
 	}
 	if (cmd->size == 1 && ms_environ[fetch_env("HOME=", ms_environ)])
 		chdir(ms_environ[fetch_env("HOME=", ms_environ)] + 5);
+	else if (cmd->size == 1)
+		ft_putstr_fd("cd: HOME not set\n", 1);
 	else if (chdir(cmd->words[1]))
 	{
 		ft_putstr_fd("cd: no such file or directory: ", 1);
@@ -40,8 +42,6 @@ void	ft_cd(t_command *cmd, char **ms_environ)
 	char *old_dirname;
 
 	old_dirname = getcwd(NULL, 0);
-	chdir("/Users");
-	return ;
 	if (!change_directory(cmd, old_dirname, ms_environ))
 		return ;
 	dirname = getcwd(NULL, 0);

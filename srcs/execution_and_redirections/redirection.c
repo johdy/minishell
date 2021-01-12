@@ -14,11 +14,9 @@ void	deal_redirection(int *pipefd, t_command *cmd, int fd_open)
 {
 	if (!ft_strcmp(cmd->end_command, "PIPE"))
 	{
-		printf("za\n");
 		close(pipefd[0]); /* close the unused read side */
 		dup2(pipefd[1], 1); /* connect the write side with stdout */
 		close(pipefd[1]); /* close the write side */
-		printf("deng\n");
 		return ;
 	}
 	if (!ft_strcmp(cmd->end_command, "LOWER") &&  fd_open > 0)

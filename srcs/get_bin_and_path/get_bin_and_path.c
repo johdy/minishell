@@ -9,6 +9,8 @@ char	**get_path(char **ms_environ)
 	i = 0;
 	while (ms_environ[i] && ft_strncmp(ms_environ[i], "PATH=", 5))
 		i++;
+	if (!ms_environ[i])
+		return (NULL);
 	path = ft_split_path(ms_environ[i], ':');
 	first_path = ft_substr(path[0], 5, ft_strlen(path[0]) - 5);
 	free(path[0]);
@@ -24,9 +26,7 @@ char	*get_bin(char *cmd, char **path)
 	int i;
 
 	i = 0;
-	if (stat(cmd, &buf) == 0)
-		return (ft_strdup(cmd));
-	while (path[i])
+	while (path && path[i])
 	{
 		tmp = ft_strjoin(path[i], "/");
 		try = ft_strjoin(tmp, cmd);

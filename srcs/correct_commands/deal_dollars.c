@@ -57,7 +57,10 @@ int		replace_env(t_command *cmd, int i, int j, char **ms_environ)
 		sizew++;
 	w = 0;
 	while (ms_environ[w] && ft_strncmp(ms_environ[w], cmd->words[i] + j, sizew))
+	{
 		w++;
+		printf("%c\n", ms_environ[w][sizew]);
+	}
 	j--;
 	if (!ms_environ[w])
 		return (0);

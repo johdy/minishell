@@ -1,9 +1,11 @@
 #include "minishell.h"
 
-void	ft_exit(t_command *cmd, char **ms_environ)
+void	ft_exit(t_command *cmd, char **ms_environ, int *pipefd, char *bin)
 {
 	clean_commands(&cmd);
 	clean_path(ms_environ);
+	free(pipefd);
+	free(bin);
 	exit(0);
 }
 

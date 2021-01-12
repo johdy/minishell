@@ -20,17 +20,17 @@ char	**init_env(void)
 		ret[i] = ft_strdup(environ[i]);
 		i++;
 	}
-	i = 0;
-	while(i < size)
-		printf("%s\n", ret[i++]);
+	ret[i] = NULL;
 	return (ret);
 }
 
-int		deal_cmd(t_command **commands, char **ms_environ)
+int		deal_cmd(t_command **commands, char ***ms_environ)
 {
 	t_command *cmd;
 	int *pipefd;
 	int fd_open;
+	int old_stdin;
+	int	old_stdout;
 
 	pipefd = NULL;
 	cmd = *commands;
@@ -43,11 +43,15 @@ int		deal_cmd(t_command **commands, char **ms_environ)
 				close(pipefd[1]);
 				dup2(pipefd[0], 0);
 				close(pipefd[0]);
-				free(pipefd);		
+				free(pipefd);
 			}
-			printf("yo\n");
-			pipefd = execute_cmd(cmd, ms_environ);
-			printf("%d printf%d\n", pipefd[0], pipefd[1]);
+			else
+			{
+				old_stdin = dup(0);
+				old_stdout = dup(1);
+			}
+			pipefd = execute_cmd(cmd, ms_environ, old_stdin, old_stdout);
+			//printf("%d printf%d\n", pipefd[0], pipefd[1]);
 		}
 		if (is_redirection_cmd(cmd->end_command))
 			cmd = cmd->next;
@@ -62,16 +66,11 @@ int		main(void)
 	int err;
 	t_list *lex;
 	t_command *commands;
-	int old_stdin;
-	int	old_stdout;
 	char	**ms_environ;
 
 	ms_environ = init_env();
 	while (1)
 	{
-		old_stdin = dup(0);
-		old_stdout = dup(1);
-		//printf("%d %d\n", old_stdin, old_stdout);
 		ft_putstr_fd("miniwouf > ", 1);
 		err = get_next_line(0, &line);
 		get_lex(line, &lex);
@@ -79,12 +78,8 @@ int		main(void)
 		get_commands(lex, &commands);
 		//display_commands(&commands);
 		ft_lstclear(&lex, &free);
-		deal_cmd(&commands, ms_environ);
+		deal_cmd(&commands, &ms_environ);
 		clean_commands(&commands);
-		dup2(old_stdin, 0);
-		dup2(old_stdout, 1);
-		close(old_stdin);
-		close(old_stdout);
 		//exit(0);
 	}
 }

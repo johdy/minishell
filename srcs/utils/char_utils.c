@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+int		find_eq(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '=')
+			return (i);
+		i++;
+	}
+	return (0);
+}
+
 int		is_end_command(char *token)
 {
 	if(ft_strcmp(token, "PIPE") == 0)

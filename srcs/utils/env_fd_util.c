@@ -9,3 +9,11 @@ int		fetch_env(char *id, char **ms_environ)
 		i++;
 	return (i);
 }
+
+void	restore_std(int stdin, int stdout)
+{
+	dup2(stdin, 0);
+	dup2(stdout, 1);
+	close(stdin);
+	close(stdout);
+}
