@@ -55,12 +55,7 @@ int		replace_env(t_command *cmd, int i, int j, char **ms_environ)
 	sizew = 0;
 	while (!is_envvar_ending(cmd->words[i][j + sizew]) && cmd->words[i][j + sizew])
 		sizew++;
-	w = 0;
-	while (ms_environ[w] && ft_strncmp(ms_environ[w], cmd->words[i] + j, sizew))
-	{
-		w++;
-		printf("%c\n", ms_environ[w][sizew]);
-	}
+	w = fetch_env(cmd->words[i] + j, ms_environ, sizew);
 	j--;
 	if (!ms_environ[w])
 		return (0);

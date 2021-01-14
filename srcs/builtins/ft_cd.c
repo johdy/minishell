@@ -8,8 +8,8 @@ int		change_directory(t_command *cmd, char *old_dirname, char **ms_environ)
 		free(old_dirname);
 		return (0);
 	}
-	if (cmd->size == 1 && ms_environ[fetch_env("HOME=", ms_environ)])
-		chdir(ms_environ[fetch_env("HOME=", ms_environ)] + 5);
+	if (cmd->size == 1 && ms_environ[fetch_env("HOME=", ms_environ, 0)])
+		chdir(ms_environ[fetch_env("HOME=", ms_environ, 0)] + 5);
 	else if (cmd->size == 1)
 		ft_putstr_fd("cd: HOME not set\n", 1);
 	else if (chdir(cmd->words[1]))
@@ -28,7 +28,7 @@ void	update_env(char *new_val, char **ms_environ, char *id)
 	int i;
 	char *new_env;
 
-	i = fetch_env(id, ms_environ);
+	i = fetch_env(id, ms_environ, 0);
 	if (!ms_environ[i])
 		return ;
 	new_env = ft_strjoin(id, new_val);
