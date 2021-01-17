@@ -8,7 +8,7 @@
 # include <fcntl.h>
 # include <string.h>
 # include <sys/errno.h>
-
+# include <signal.h>
 typedef struct			s_command
 {
 	char				**words;

@@ -69,6 +69,7 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 	p_pid = fork();
 	if (p_pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		if (!ft_execution(bin, cmd, pipefd, ms_environ))
 		{
 			restore_std(cmd->old_stdin, cmd->old_stdout);

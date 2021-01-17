@@ -69,6 +69,7 @@ int		main(void)
 	char	**ms_environ;
 
 	ms_environ = init_env();
+    signal(SIGINT, SIG_IGN);
 	while (1)
 	{
 		ft_putstr_fd("miniwouf > ", 1);
