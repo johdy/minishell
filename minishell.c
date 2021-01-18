@@ -40,6 +40,7 @@ int		deal_cmd(t_command **commands, char ***ms_environ)
 		{
 			if (pipefd)
 			{
+				printf("hello\n");
 				close(pipefd[1]);
 				dup2(pipefd[0], 0);
 				close(pipefd[0]);
@@ -53,7 +54,7 @@ int		deal_cmd(t_command **commands, char ***ms_environ)
 			pipefd = execute_cmd(cmd, ms_environ, old_stdin, old_stdout);
 			//printf("%d printf%d\n", pipefd[0], pipefd[1]);
 		}
-		if (is_redirection_cmd(cmd->end_command))
+		while (is_redirection_cmd(cmd->end_command))
 			cmd = cmd->next;
 		cmd = cmd->next;
 	}

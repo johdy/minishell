@@ -41,19 +41,36 @@ void	exec_builtin(t_command *cmd, char ***ms_environ, int *pipefd, char *bin)
 
 int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
-	int fd_open;
+	int *fd_open;
+	t_command *redir;
+	int *old_fds;
 
-	fd_open = 1;
-	if (is_redirection_cmd(cmd->end_command))
-		fd_open = how_to_open(cmd->end_command, cmd->next->words[0]);
-	if (fd_open < 0)
+	redir = cmd;
+	old_fds = NULL;
+	fd_open = malloc(sizeof(int) * 2);
+	fd_open[0] = 0;
+	fd_open[1] = 1;
+	while (is_redirection_cmd(redir->end_command))
+	{
+		fd_open = how_to_open(redir->end_command, redir->next->words[0], fd_open);
+		redir = redir->next;
+	}
+	redir = cmd;
+	if (fd_open[0] < 0 || fd_open[1] < 0)
 	{
 		ft_putstr_fd(strerror(errno), 1);
 		ft_putstr_fd("\n", 1);
 		return (1);
 	}
-	if (is_redirection_cmd(cmd->end_command) || !ft_strcmp(cmd->end_command, "PIPE"))
-		deal_redirection(pipefd, cmd, fd_open);
+	while (is_redirection_cmd(redir->end_command) || !ft_strcmp(redir->end_command, "PIPE"))
+	{
+		old_fds = deal_redirection(pipefd, redir, fd_open, old_fds);
+		if (!ft_strcmp(redir->end_command, "PIPE"))
+			break ;
+		redir = redir->next;
+	}
+	free(old_fds);
+	free(fd_open);
 	if (is_builtin(cmd->words[0]))
 		exec_builtin(cmd, ms_environ, pipefd, bin);
 	else if (execve(bin, cmd->words, *ms_environ) < 0)

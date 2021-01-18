@@ -28,35 +28,6 @@ char	**comm_words_table(t_list *first, int size)
 	return (ret);
 }
 
-/*int		*fill_quotes(int nb, t_list *first)
-{
-	int *ret;
-	int i;
-	int nb_lex;
-	int new;
-
-	i = 0;
-	nb_lex = 0;
-	new = 1;
-	ret = malloc(sizeof(int) * (nb + 1));
-	while (i < nb)
-	{
-		if (!ft_strcmp((char*)first->content, "QUOTE") && new)
-		{
-			ret[i++] = nb_lex;
-			new = 0;
-		}
-		else if (!ft_strcmp((char*)first->content, "QUOTE") && !new)
-			new = 1;
-		else if (ft_strcmp((char*)first->content, "DQUOTE"))
-			nb_lex++;
-		first = first->next;
-	}
-	ret[i] = -1;
-	return (ret);
-
-}*/
-
 t_list	*get_comm_infos(t_command **comm_addr, t_list *lex)
 {
 	t_command	*comm;

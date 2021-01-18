@@ -41,8 +41,8 @@ int		*get_quotes_nb(t_list *first, int size);
 int		is_q_dq_st(char *tok, int quote, int dquote, int stickit);
 
 //Redirections
-int		how_to_open(char *redir, char *file);
-void	deal_redirection(int *pipefd, t_command *cmd, int fd_open);
+int		*how_to_open(char *redir, char *file, int *fd_open);
+int		*deal_redirection(int *pipefd, t_command *cmd, int *fd_open, int *old_fds);
 
 //Builtins
 void	ft_echo(t_command *cmd);
@@ -52,6 +52,9 @@ void	ft_exit(t_command *cmd, char **ms_environ, int *pipefd, char *bin);
 void	ft_env(t_command *cmd, char **ms_environ);
 void	ft_unset(t_command *cmd, char **ms_environ);
 void	ft_export(t_command *cmd, char ***ms_environ);
+void	append_env(char *str, char ***ms_environ);
+int		deal_wrong_export(char *str, int i, int j);
+int		check_export(char *str, int i);
 
 //Correct
 void	correct_cmd(t_command *cmd, char **ms_environ);

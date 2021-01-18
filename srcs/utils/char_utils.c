@@ -11,7 +11,7 @@ int		find_eq(char *str)
 			return (i);
 		i++;
 	}
-	return (0);
+	return (i);
 }
 
 int		is_end_command(char *token)
