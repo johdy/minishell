@@ -39,18 +39,26 @@ void	exec_builtin(t_command *cmd, char ***ms_environ, int *pipefd, char *bin)
 		exit(0);
 }
 
+int		clean_op_fd(int *fd_open)
+{
+	if (fd_open[0] != 0)
+		close (fd_open[0]);
+	if (fd_open[1] != 1)
+		close (fd_open[1]);
+	free(fd_open);
+	return (0);	
+}
+
 int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
 	int *fd_open;
 	t_command *redir;
-	int *old_fds;
 
 	redir = cmd;
-	old_fds = NULL;
 	fd_open = malloc(sizeof(int) * 2);
 	fd_open[0] = 0;
 	fd_open[1] = 1;
-	while (is_redirection_cmd(redir->end_command))
+	while (is_redirection_cmd(redir->end_command) && (fd_open[0] >= 0 || fd_open[1] >= 0))
 	{
 		fd_open = how_to_open(redir->end_command, redir->next->words[0], fd_open);
 		redir = redir->next;
@@ -62,19 +70,20 @@ int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 		ft_putstr_fd("\n", 1);
 		return (1);
 	}
-	while (is_redirection_cmd(redir->end_command) || !ft_strcmp(redir->end_command, "PIPE"))
+	while (is_redirection_cmd(redir->end_command))
 	{
-		old_fds = deal_redirection(pipefd, redir, fd_open, old_fds);
-		if (!ft_strcmp(redir->end_command, "PIPE"))
-			break ;
+		deal_redirection(pipefd, redir, fd_open);
 		redir = redir->next;
 	}
-	free(old_fds);
-	free(fd_open);
+	if (!ft_strcmp(redir->end_command, "PIPE") && fd_open[1] == 1)
+		deal_redirection(pipefd, redir, fd_open);
+//	else if (!ft_strcmp(redir->end_command, "PIPE"))
+//		old_fds = deal_redirection(pipefd, cmd, fd_open, old_fds);
 	if (is_builtin(cmd->words[0]))
 		exec_builtin(cmd, ms_environ, pipefd, bin);
 	else if (execve(bin, cmd->words, *ms_environ) < 0)
-		return (0);
+		return (clean_op_fd(fd_open));
+	clean_op_fd(fd_open);
 	return (1);
 }
 
@@ -99,6 +108,15 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 		waitpid(p_pid, &stt, 0);	
 }
 
+int		check_redir_pipe(t_command *cmd)
+{
+	while (cmd && is_redirection_cmd(cmd->end_command))
+		cmd = cmd->next;
+	if (!ft_strcmp(cmd->end_command, "PIPE"))
+		return (1);
+	return (0);
+}
+
 int		*execute_cmd(t_command *cmd, char ***ms_environ, int old_stdin, int old_stdout)
 {
 	char **path;
@@ -113,15 +131,17 @@ int		*execute_cmd(t_command *cmd, char ***ms_environ, int old_stdin, int old_std
 	cmd->old_stdout = old_stdout;
 	pipefd = malloc(sizeof(int) * 2);
 	pipe(pipefd);
-	if (is_builtin(cmd->words[0]) && ft_strcmp(cmd->end_command, "PIPE"))
+	if (is_builtin(cmd->words[0]) && !check_redir_pipe(cmd))
 		ft_execution(bin, cmd, pipefd, ms_environ);
 	else
 		forkit(bin, cmd, pipefd, ms_environ);
 	free(bin);
-	if (!ft_strcmp(cmd->end_command, "PIPE"))
+	if (check_redir_pipe(cmd))
 		return (pipefd);
 	else
 		restore_std(old_stdin, old_stdout);
+	close(pipefd[0]);
+	close(pipefd[1]);
 	free(pipefd);
 	return (NULL);
 }

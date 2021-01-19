@@ -42,7 +42,7 @@ int		is_q_dq_st(char *tok, int quote, int dquote, int stickit);
 
 //Redirections
 int		*how_to_open(char *redir, char *file, int *fd_open);
-int		*deal_redirection(int *pipefd, t_command *cmd, int *fd_open, int *old_fds);
+void	deal_redirection(int *pipefd, t_command *cmd, int *fd_open);
 
 //Builtins
 void	ft_echo(t_command *cmd);
