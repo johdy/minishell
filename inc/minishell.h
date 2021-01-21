@@ -71,5 +71,13 @@ int		fetch_env(char *id, char **ms_environ, int size);
 void	restore_std(int stdin, int stdout);
 int		find_eq(char *str);
 
+//Signaux
+void	sigc(int mask);
+void	sigc_fork(int mask);
+void	sigbs(int mask);
+void	sigbs_fork(int mask);
+void	insert_in_new_input(char **new_input, char *reste);
+char	*deal_ctrld(char *tojoin, char *new_input, char **ms_environ);
+
 extern char **environ;
 #endif

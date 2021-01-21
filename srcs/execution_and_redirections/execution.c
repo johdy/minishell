@@ -105,7 +105,13 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 		exit(0);
 	}
 	else if (p_pid > 0)
+	{
+		signal(SIGINT, sigc_fork);
+		signal(SIGQUIT, sigbs_fork);
 		waitpid(p_pid, &stt, 0);	
+	}
+	signal(SIGINT, sigc);
+	signal(SIGQUIT, sigbs);
 }
 
 int		check_redir_pipe(t_command *cmd)

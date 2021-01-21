@@ -62,6 +62,7 @@ int		deal_cmd(t_command **commands, char ***ms_environ)
 
 int		main(void)
 {
+	char *tojoin;
 	char *line;
 	int err;
 	t_list *lex;
@@ -69,18 +70,30 @@ int		main(void)
 	char	**ms_environ;
 
 	ms_environ = init_env();
-    signal(SIGINT, SIG_IGN);
+	tojoin = NULL;
+    signal(SIGINT, sigc);
+    signal(SIGQUIT, sigbs);
 	while (1)
 	{
-		ft_putstr_fd("miniwouf > ", 1);
+		if (!tojoin)
+			ft_putstr_fd("miniwouf > ", 1);
 		err = get_next_line(0, &line);
-		get_lex(line, &lex);
-		//display_lex(&lex);
-		get_commands(lex, &commands);
-		//display_commands(&commands);
-		ft_lstclear(&lex, &free);
-		deal_cmd(&commands, &ms_environ);
-		clean_commands(&commands);
-		//exit(0);
+		if (err == 0)
+			tojoin = deal_ctrld(tojoin, line, ms_environ);
+		else
+		{
+			if (tojoin)
+			{
+				insert_in_new_input(&line, tojoin);
+				tojoin = NULL;
+			}
+			get_lex(line, &lex);
+			//display_lex(&lex);
+			get_commands(lex, &commands);
+			//display_commands(&commands);
+			ft_lstclear(&lex, &free);
+			deal_cmd(&commands, &ms_environ);
+			clean_commands(&commands);
+		}
 	}
 }
