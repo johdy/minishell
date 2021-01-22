@@ -74,7 +74,7 @@ void	ft_export(t_command *cmd, char ***ms_environ)
 		i = find_eq(cmd->words[1 + j]);
 		ms_env_pos = fetch_env(cmd->words[1 + j], ms_env_copy, i);
 		if (check_export(cmd->words[1 + j], i) != 1)
-			j = deal_wrong_export(cmd->words[1 + j], i, j);
+			j = deal_wrong_export(cmd->words[1 + j], i, j, cmd);
 		else if (ms_env_copy[ms_env_pos])
 		{
 			free(ms_env_copy[ms_env_pos]);

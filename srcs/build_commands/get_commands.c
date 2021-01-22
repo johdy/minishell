@@ -61,6 +61,7 @@ void	get_commands(t_list *lex, t_command **commands)
 	{
 		lex = get_comm_infos(&comm, lex);
 		comm->end_command = ft_strdup((char *)lex->content);
+		comm->out = 0;
 		if (lex->next)
 		{
 			next_comm = malloc(sizeof(t_command));

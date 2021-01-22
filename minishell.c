@@ -54,10 +54,19 @@ int		deal_cmd(t_command **commands, char ***ms_environ)
 			//printf("%d printf%d\n", pipefd[0], pipefd[1]);
 		}
 		while (cmd && is_redirection_cmd(cmd->end_command))
+		{
+			cmd->next->prev_out = cmd->out;
 			cmd = cmd->next;
-		cmd = cmd->next;
+		}
+		if (ft_strcmp(cmd->end_command, "END"))
+		{
+			cmd->next->prev_out = cmd->out;
+			cmd = cmd->next;
+		}
+		else
+			break;
 	}
-	return (1);
+	return (cmd->out);
 }
 
 int		main(void)
@@ -68,11 +77,13 @@ int		main(void)
 	t_list *lex;
 	t_command *commands;
 	char	**ms_environ;
+	int		init_prev_out;
 
 	ms_environ = init_env();
 	tojoin = NULL;
     signal(SIGINT, sigc);
     signal(SIGQUIT, sigbs);
+    init_prev_out = 0;
 	while (1)
 	{
 		if (!tojoin)
@@ -90,9 +101,10 @@ int		main(void)
 			get_lex(line, &lex);
 			//display_lex(&lex);
 			get_commands(lex, &commands);
+			commands->prev_out = init_prev_out;
 			//display_commands(&commands);
 			ft_lstclear(&lex, &free);
-			deal_cmd(&commands, &ms_environ);
+			init_prev_out = deal_cmd(&commands, &ms_environ);
 			clean_commands(&commands);
 		}
 	}

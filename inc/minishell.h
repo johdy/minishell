@@ -19,6 +19,8 @@ typedef struct			s_command
 	int					*stickits;
 	int					old_stdin;
 	int					old_stdout;
+	int					out; 
+	int					prev_out;
 }						t_command;
 
 void	clean_commands(t_command **cmds);
@@ -53,7 +55,7 @@ void	ft_env(t_command *cmd, char **ms_environ);
 void	ft_unset(t_command *cmd, char **ms_environ);
 void	ft_export(t_command *cmd, char ***ms_environ);
 void	append_env(char *str, char ***ms_environ);
-int		deal_wrong_export(char *str, int i, int j);
+int		deal_wrong_export(char *str, int i, int j, t_command *cmd);
 int		check_export(char *str, int i);
 
 //Correct

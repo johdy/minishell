@@ -8,6 +8,7 @@ void	ft_env(t_command *cmd, char **ms_environ)
 	if (cmd->size > 1)
 	{
 		ft_putstr_fd("env: too many arguments\n", 1);
+		cmd->out = 1;
 		return ;
 	}
 	while (ms_environ[i])

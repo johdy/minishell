@@ -13,7 +13,7 @@ int		check_export(char *str, int i)
 	return (-1);
 }
 
-int		deal_wrong_export(char *str, int i, int j)
+int		deal_wrong_export(char *str, int i, int j, t_command *cmd)
 {
 	int err_nb;
 
@@ -23,6 +23,7 @@ int		deal_wrong_export(char *str, int i, int j)
 		ft_putstr_fd("export: `", 1);
 		ft_putstr_fd(str, 1);
 		ft_putstr_fd("': not a valid identifier\n", 1);
+		cmd->out = 1;
 	}
 	return (j + 1);
 }

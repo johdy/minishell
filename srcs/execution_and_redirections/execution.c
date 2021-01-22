@@ -102,7 +102,7 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 			ft_putstr_fd(strerror(errno), 1);
 			ft_putstr_fd("\n", 1);
 		}
-		exit(0);
+		exit(127);
 	}
 	else if (p_pid > 0)
 	{
@@ -110,6 +110,8 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 		signal(SIGQUIT, sigbs_fork);
 		waitpid(p_pid, &stt, 0);	
 	}
+	if (WIFEXITED(stt))
+		cmd->out = WEXITSTATUS(stt);
 	signal(SIGINT, sigc);
 	signal(SIGQUIT, sigbs);
 }
