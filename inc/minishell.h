@@ -9,6 +9,10 @@
 # include <string.h>
 # include <sys/errno.h>
 # include <signal.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <sys/wait.h>
 typedef struct			s_command
 {
 	char				**words;
@@ -23,7 +27,9 @@ typedef struct			s_command
 	int					prev_out;
 }						t_command;
 
+char	**init_env(void);
 void	clean_commands(t_command **cmds);
+void	ft_failed_malloc(char **ms_environ, t_command **commands);
 void	get_lex(char *line, t_list **lex);
 void	deal_quotes(char *line, int *head_ptr, int *quotes, t_list **lex);
 void	deal_cmp(char *line, int *head_ptr, t_list **lex);
@@ -34,7 +40,7 @@ void	clean_path(char **path);
 char	**get_path(char **ms_environ);
 char	**ft_split_path(char *str, char c);
 char	*get_bin(char *cmd, char **path);
-int		*execute_cmd(t_command *cmd, char ***ms_environ, int old_stdin, int old_stdout);
+int		*execute_cmd(t_command *cmd, char ***ms_environ, int *old_stds, t_command **commands);
 
 //Get_commands
 void	get_commands(t_list *lex, t_command **commands);
@@ -78,7 +84,7 @@ void	sigc(int mask);
 void	sigc_fork(int mask);
 void	sigbs(int mask);
 void	sigbs_fork(int mask);
-void	insert_in_new_input(char **new_input, char *reste);
+void	insert_in_new_input(char **new_input, char *reste, char **ms_environ);
 char	*deal_ctrld(char *tojoin, char *new_input, char **ms_environ);
 
 extern char **environ;

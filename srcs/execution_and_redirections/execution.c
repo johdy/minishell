@@ -87,6 +87,15 @@ int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 	return (1);
 }
 
+void	cmd_not_found(t_command *cmd, char **ms_environ)
+{
+	ft_putstr_fd("minishell: ", 1);
+	ft_putstr_fd(cmd->words[0], 1);
+	ft_putstr_fd(": ", 1);
+	restore_std(cmd->old_stdin, cmd->old_stdout);
+	ft_putstr_fd("command not found\n", 1);
+}
+
 void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
 	pid_t p_pid;
@@ -96,8 +105,13 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 	if (p_pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		if (!ft_execution(bin, cmd, pipefd, ms_environ))
+		if (!bin && !is_builtin(cmd->words[0]))
+			cmd_not_found(cmd, *ms_environ);
+		else if (!ft_execution(bin, cmd, pipefd, ms_environ))
 		{
+			ft_putstr_fd("minishell: ", 1);
+			ft_putstr_fd(cmd->words[0], 1);
+			ft_putstr_fd(": ", 1);
 			restore_std(cmd->old_stdin, cmd->old_stdout);
 			ft_putstr_fd(strerror(errno), 1);
 			ft_putstr_fd("\n", 1);
@@ -125,7 +139,7 @@ int		check_redir_pipe(t_command *cmd)
 	return (0);
 }
 
-int		*execute_cmd(t_command *cmd, char ***ms_environ, int old_stdin, int old_stdout)
+int		*execute_cmd(t_command *cmd, char ***ms_environ, int *old_stds, t_command **commands)
 {
 	char **path;
 	char *bin;
@@ -135,8 +149,8 @@ int		*execute_cmd(t_command *cmd, char ***ms_environ, int old_stdin, int old_std
 	correct_cmd(cmd, *ms_environ);
 	bin = get_bin(cmd->words[0], path);
 	clean_path(path);
-	cmd->old_stdin = old_stdin;
-	cmd->old_stdout = old_stdout;
+	cmd->old_stdin = old_stds[0];
+	cmd->old_stdout = old_stds[1];
 	pipefd = malloc(sizeof(int) * 2);
 	pipe(pipefd);
 	if (is_builtin(cmd->words[0]) && !check_redir_pipe(cmd))
@@ -147,7 +161,7 @@ int		*execute_cmd(t_command *cmd, char ***ms_environ, int old_stdin, int old_std
 	if (check_redir_pipe(cmd))
 		return (pipefd);
 	else
-		restore_std(old_stdin, old_stdout);
+		restore_std(cmd->old_stdin, cmd->old_stdout);
 	close(pipefd[0]);
 	close(pipefd[1]);
 	free(pipefd);

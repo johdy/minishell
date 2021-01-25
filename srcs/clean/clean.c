@@ -32,3 +32,14 @@ void	clean_path(char **path)
 	if (path)
 		free(path);
 }
+
+void	ft_failed_malloc(char **ms_environ, t_command **commands)
+{
+	if (ms_environ)
+		clean_path(ms_environ);
+	if (commands)
+		clean_commands(commands);
+	ft_putstr_fd("minishell : malloc failiure. exiting\n", 1);
+	system("leaks a.out");
+	exit(12);
+}

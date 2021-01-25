@@ -36,5 +36,5 @@ char	*get_bin(char *cmd, char **path)
 		free(try);
 		i++;
 	}
-	return (ft_strdup(cmd));
+	return (NULL);
 }

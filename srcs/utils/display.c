@@ -35,6 +35,7 @@ void	display_commands(t_command **commands)
 		j = -1;
 		while (cmd->stickits[++j] != -1)
 			printf("mot nb %d est stické : %d\n", j, cmd->stickits[j]);
+		printf("cmd out%d\n", cmd->out);
 		cmd = cmd->next;
 		count++;
 	}

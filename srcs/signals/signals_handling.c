@@ -2,7 +2,7 @@
 
 void	sigc(int mask)
 {
-	ft_putstr_fd("\b\b  \b\b\nminiwouf > ", 1);
+	ft_putstr_fd("\b\b  \b\b\nminishell > ", 1);
 }
 
 void	sigc_fork(int mask)
