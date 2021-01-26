@@ -16,7 +16,7 @@ void	insert_in_new_input(char **new_input, char *reste, char **ms_environ)
 	free(reste);
 	free(*new_input);
 	if (tmp == NULL)
-		ft_failed_malloc(ms_environ, 0);
+		ft_failed_malloc(ms_environ, 0, 0, 0);
 	*new_input = tmp;
 }
 
@@ -38,7 +38,7 @@ char	*deal_ctrld(char *tojoin, char *new_input, char **ms_environ)
 		ret = ft_strdup(new_input);
 		free(new_input);
 		if (!ret)
-			ft_failed_malloc(ms_environ, 0);
+			ft_failed_malloc(ms_environ, 0, 0, 0);
 		return (ret);
 	}
 	insert_in_new_input(&new_input, tojoin, ms_environ);

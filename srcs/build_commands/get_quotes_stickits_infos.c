@@ -5,7 +5,8 @@ int		*get_quotes_nb(t_list *first, int size)
 	int i;
 	int *ret;
 
-	ret = malloc(sizeof(int) * (size + 1));
+	if (!(ret = malloc(sizeof(int) * (size + 1))))
+		return (NULL);
 	i = 0;
 	while (!is_end_command((char *)first->content))
 	{
@@ -32,7 +33,8 @@ int		*get_stickits_nb(t_list *first, int size)
 	int i;
 	int *ret;
 
-	ret = malloc(sizeof(int) * (size + 1));
+	if (!(ret = malloc(sizeof(int) * (size + 1))))
+		return (NULL);
 	i = 0;
 	while (!is_end_command((char *)first->content))
 	{

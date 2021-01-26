@@ -2,8 +2,12 @@
 
 t_command	*deal_next_link(t_command *cmd)
 {
+	int redirected;
+
+	redirected = 0;
 	while (cmd && is_redirection_cmd(cmd->end_command))
 	{
+		redirected = 1;
 		cmd->next->prev_out = cmd->out;
 		cmd = cmd->next;
 	}
@@ -12,8 +16,9 @@ t_command	*deal_next_link(t_command *cmd)
 		cmd->next->prev_out = cmd->out;
 		return (cmd->next);
 	}
-	else
-		return (cmd);
+	else if (redirected)
+		cmd->abort = 1;
+	return (cmd);
 }
 
 void		connect_pipe(int *pipefd, int *old_stds)
@@ -43,14 +48,15 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 	cmd = *commands;
 	while (cmd)
 	{
-		if (cmd->size)
+		if (cmd->size && !cmd->abort)
 		{
 			connect_pipe(pipefd, old_stds);
 			pipefd = execute_cmd(cmd, ms_environ, old_stds, commands);
 			//printf("%d printf%d\n", pipefd[0], pipefd[1]);
 		}
-		if (cmd == deal_next_link(cmd))
+		if (!ft_strcmp(cmd->end_command, "END"))
 			break ;
+		cmd = deal_next_link(cmd);
 	}
 	return (cmd->out);
 }
@@ -74,9 +80,10 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
 			insert_in_new_input(&line, *tojoin, *ms_environ);
 			*tojoin = NULL;
 		}
-		get_lex(line, &lex);
+		get_lex(line, &lex, *ms_environ);
 		//display_lex(&lex);
-		get_commands(lex, &commands);
+		if (!get_commands(lex, &commands,*ms_environ))
+			ft_failed_malloc(*ms_environ, &commands, &lex, 0);
 		commands->prev_out = *init_prev_out;
 		//display_commands(&commands);
 		ft_lstclear(&lex, &free);

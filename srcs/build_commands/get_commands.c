@@ -11,64 +11,91 @@ int		is_q_dq_st(char *tok, int quote, int dquote, int stickit)
 	return (0);
 }
 
+char	**free_enomem(char **tab, int i)
+{
+	i--;
+	i--;
+	while (i >= 0)
+		free(tab[i--]);
+	free(tab);
+	return (NULL);
+}
+
 char	**comm_words_table(t_list *first, int size)
 {
 	char **ret;
 	int i;
 
 	i = 0;
-	ret = malloc(sizeof(char*) * (size + 1));
+	if (!(ret = malloc(sizeof(char*) * (size + 1))))
+		return (NULL);
 	while (i < size)
 	{
 		if (!is_q_dq_st((char*)first->content, 1, 1, 1))
-			ret[i++] = ft_strdup((char*)first->content + 1);
+		{
+			if (!(ret[i++] = ft_strdup((char*)first->content + 1)))
+				return (free_enomem(ret, i));
+		}
 		first = first->next;
 	}
 	ret[i] = NULL;
 	return (ret);
 }
 
-t_list	*get_comm_infos(t_command **comm_addr, t_list *lex)
+int		get_comm_infos(t_command **comm_addr, t_list **lex)
 {
 	t_command	*comm;
 	t_list		*first;
 
 	comm = *comm_addr;
 	comm->size = 0;
-	first = lex;
-	while (!is_end_command((char *)lex->content))
+	comm->nb_malloc = 0;
+	comm->abort = 0;
+	first = *lex;
+	while (!is_end_command((char *)(*lex)->content))
 	{
-		if (!is_q_dq_st((char*)lex->content, 1, 1, 1))
+		if (!is_q_dq_st((char*)(*lex)->content, 1, 1, 1))
 			comm->size++;
-		lex = lex->next;
+		(*lex) = (*lex)->next;
 	}
-	comm->stickits = get_stickits_nb(first, comm->size);
-	comm->quotes = get_quotes_nb(first, comm->size);
-	comm->words = comm_words_table(first, comm->size);
-	return (lex);
+	if (!(comm->stickits = get_stickits_nb(first, comm->size)))
+		return (0);
+	comm->nb_malloc++;
+	if (!(comm->quotes = get_quotes_nb(first, comm->size)))
+		return (0);
+	comm->nb_malloc++;
+	if (!(comm->words = comm_words_table(first, comm->size)))
+		return (0);
+	comm->nb_malloc++;
+	return (1);
 }
 
-void	get_commands(t_list *lex, t_command **commands)
+int		get_commands(t_list *lex, t_command **commands, char **ms_environ)
 {
 	t_command	*comm;
 	t_command	*next_comm;
-	int			stickit;
 	
-	comm = malloc(sizeof(t_command));
+	if (!(comm = malloc(sizeof(t_command))))
+		ft_failed_malloc(ms_environ, 0, &lex, 0);
 	*commands = comm;
 	lex = lex->next;
 	while (lex)
 	{
-		lex = get_comm_infos(&comm, lex);
-		comm->end_command = ft_strdup((char *)lex->content);
+		comm->next = NULL;
+		if (!(get_comm_infos(&comm, &lex)))
+			return (0);
+		if (!(comm->end_command = ft_strdup((char *)lex->content)))
+			return (0);
+		comm->nb_malloc++;
 		comm->out = 0;
 		if (lex->next)
 		{
-			next_comm = malloc(sizeof(t_command));
+			if (!(next_comm = malloc(sizeof(t_command))))
+				return (0);
 			comm->next = next_comm;
 			comm = comm->next;
 		}
 		lex = lex->next;
 	}
-	comm->next = NULL;
+	return (1);
 }

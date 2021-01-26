@@ -11,11 +11,11 @@ char		**init_env(void)
 	while (environ[size])
 		size++;
 	if (!(ret = malloc(sizeof(char*) * (size + 1))))
-		ft_failed_malloc(0, 0);
+		ft_failed_malloc(0, 0, 0, 0);
 	while (i < size)
 	{
 		if (!(ret[i] = ft_strdup(environ[i])))
-			ft_failed_malloc(ret, 0);
+			ft_failed_malloc(ret, 0, 0, 0);
 		i++;
 	}
 	ret[i] = NULL;

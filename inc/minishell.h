@@ -15,26 +15,23 @@
 # include <sys/wait.h>
 typedef struct			s_command
 {
-	char				**words;
-	int					size;
-	void				*end_command;
-	struct s_command	*next;
-	int					*quotes;
 	int					*stickits;
+	int					*quotes;
+	char				**words;
+	void				*end_command;
+	int					size;
 	int					old_stdin;
 	int					old_stdout;
-	int					out; 
+	int					out;
 	int					prev_out;
+	int					nb_malloc;
+	int					abort;
+	struct s_command	*next;
 }						t_command;
 
 char	**init_env(void);
 void	clean_commands(t_command **cmds);
-void	ft_failed_malloc(char **ms_environ, t_command **commands);
-void	get_lex(char *line, t_list **lex);
-void	deal_quotes(char *line, int *head_ptr, int *quotes, t_list **lex);
-void	deal_cmp(char *line, int *head_ptr, t_list **lex);
-void	deal_pipe_sc(char *line, int *head_ptr, t_list **lex);
-void	add_back_normal_word(char* start, int size, t_list **lex);
+void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, char *str);
 void	clean_commands(t_command **cmds);
 void	clean_path(char **path);
 char	**get_path(char **ms_environ);
@@ -42,8 +39,15 @@ char	**ft_split_path(char *str, char c);
 char	*get_bin(char *cmd, char **path);
 int		*execute_cmd(t_command *cmd, char ***ms_environ, int *old_stds, t_command **commands);
 
+//Get_lex
+void	get_lex(char *line, t_list **lex, char **ms_environ);
+int		deal_quotes(char *line, int *head_ptr, int *quotes, t_list **lex);
+int		deal_cmp(char *line, int *head_ptr, t_list **lex);
+int		deal_pipe_sc(char *line, int *head_ptr, t_list **lex);
+int		add_back_normal_word(char* start, int size, t_list **lex);
+
 //Get_commands
-void	get_commands(t_list *lex, t_command **commands);
+int		get_commands(t_list *lex, t_command **commands, char **ms_environ);
 int		*get_stickits_nb(t_list *first, int size);
 int		*get_quotes_nb(t_list *first, int size);
 int		is_q_dq_st(char *tok, int quote, int dquote, int stickit);
@@ -78,6 +82,8 @@ int		ft_strcmp(char *s1, char *s2);
 int		fetch_env(char *id, char **ms_environ, int size);
 void	restore_std(int stdin, int stdout);
 int		find_eq(char *str);
+int		ft_xlstnew_dup(t_list **elem, char *content);
+int		ft_xlstadd_back_new(t_list **lex, char *content);
 
 //Signaux
 void	sigc(int mask);
