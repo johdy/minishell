@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+int		malloc_last_word(char **tab, long int nbw, char *str)
+{
+	if (nbw != 0)
+		tab[nbw - 1] = ft_strdup(str);
+	else
+		return (0);
+	if (!tab[nbw - 1])
+	{
+		free(tab[nbw - 1]);
+		return (0);
+	}
+	return (1);
+}
+
 int		ft_nbw(char *str, char c)
 {
 	int ret;
@@ -32,18 +46,19 @@ char	**ft_split_path(char *str, char c)
 	nbw = ft_nbw(str, c);
 	if (!(tab = malloc(sizeof(char*) * (nbw + 1))))
 		return (0);
-	tab[nbw] = 0;
 	if (nbw == 0)
 		return (tab);
 	while (i + 1 < nbw)
 	{
 		if (!(tab[i++] = ft_substr(str, 0, ft_strchr(str, c) - str)))
-			return (NULL);
-		str = ft_strchr(str, c);
+			return (free_enomem_table(tab, i));
+		if (!(str = ft_strchr(str, c)))
+			return (free_enomem_table(tab, i + 1));
 		while (*str == c)
 			str++;
 	}
-	if (nbw != 0)
-		tab[nbw - 1] = ft_strdup(str);
+	if (!(malloc_last_word(tab, nbw, str)))
+		return (free_enomem_table(tab, ++i));
+	tab[nbw] = 0;
 	return (tab);
 }

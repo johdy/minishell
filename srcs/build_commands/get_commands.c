@@ -11,16 +11,6 @@ int		is_q_dq_st(char *tok, int quote, int dquote, int stickit)
 	return (0);
 }
 
-char	**free_enomem(char **tab, int i)
-{
-	i--;
-	i--;
-	while (i >= 0)
-		free(tab[i--]);
-	free(tab);
-	return (NULL);
-}
-
 char	**comm_words_table(t_list *first, int size)
 {
 	char **ret;
@@ -34,7 +24,7 @@ char	**comm_words_table(t_list *first, int size)
 		if (!is_q_dq_st((char*)first->content, 1, 1, 1))
 		{
 			if (!(ret[i++] = ft_strdup((char*)first->content + 1)))
-				return (free_enomem(ret, i));
+				return (free_enomem_table(ret, i));
 		}
 		first = first->next;
 	}

@@ -31,12 +31,15 @@ typedef struct			s_command
 
 char	**init_env(void);
 void	clean_commands(t_command **cmds);
-void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, char *str);
+void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, void *str);
+void	ft_failed_pipe(char **ms_environ, t_command **commands);
+void	ft_failed_fork(char **ms_environ, t_command **commands, void *str);
 void	clean_commands(t_command **cmds);
 void	clean_path(char **path);
-char	**get_path(char **ms_environ);
+char	**free_enomem_table(char **tab, int i);
+char	**get_path(char **ms_environ, t_command **commands);
 char	**ft_split_path(char *str, char c);
-char	*get_bin(char *cmd, char **path);
+char	*get_bin(char *cmd, char **path, char **ms_environ, t_command **commands);
 int		*execute_cmd(t_command *cmd, char ***ms_environ, int *old_stds, t_command **commands);
 
 //Get_lex
@@ -69,9 +72,10 @@ int		deal_wrong_export(char *str, int i, int j, t_command *cmd);
 int		check_export(char *str, int i);
 
 //Correct
-void	correct_cmd(t_command *cmd, char **ms_environ);
-void	stick_words(t_command *cmd);
-void	lookfor_envvar(t_command *cmd, char **ms_environ);
+void	crct_cmd(t_command *cmd, char **ms_environ, t_command **commands, char **path);
+void	stick_words(t_command *cmd, t_command **commands, char **ms_environ, char **path);
+void	lookfor_env(t_command *cmd, char **ms_environ, t_command **commands, char **path);
+int		is_envvar_ending(char c);
 
 //Utils
 int		is_end_command(char *token);

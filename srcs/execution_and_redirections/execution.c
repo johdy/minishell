@@ -96,7 +96,7 @@ void	cmd_not_found(t_command *cmd, char **ms_environ)
 	ft_putstr_fd("command not found\n", 1);
 }
 
-void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
+int		forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
 	pid_t p_pid;
 	int stt;
@@ -122,12 +122,16 @@ void	forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 	{
 		signal(SIGINT, sigc_fork);
 		signal(SIGQUIT, sigbs_fork);
+		
 		waitpid(p_pid, &stt, 0);	
 	}
+	else
+		return (0);
 	if (WIFEXITED(stt))
 		cmd->out = WEXITSTATUS(stt);
 	signal(SIGINT, sigc);
 	signal(SIGQUIT, sigbs);
+	return (1);
 }
 
 int		check_redir_pipe(t_command *cmd)
@@ -139,24 +143,27 @@ int		check_redir_pipe(t_command *cmd)
 	return (0);
 }
 
-int		*execute_cmd(t_command *cmd, char ***ms_environ, int *old_stds, t_command **commands)
+int		*execute_cmd(t_command *cmd, char ***ms_e, int *old_stds, t_command **cmds)
 {
 	char **path;
 	char *bin;
 	int *pipefd;
 
-	path = get_path(*ms_environ);
-	correct_cmd(cmd, *ms_environ);
-	bin = get_bin(cmd->words[0], path);
-	clean_path(path);
 	cmd->old_stdin = old_stds[0];
 	cmd->old_stdout = old_stds[1];
-	pipefd = malloc(sizeof(int) * 2);
-	pipe(pipefd);
+	path = get_path(*ms_e, cmds);
+	crct_cmd(cmd, *ms_e, cmds, path);
+	bin = get_bin(cmd->words[0], path, *ms_e, cmds);
+	clean_path(path);
+	if (!(pipefd = malloc(sizeof(int) * 2)) || pipe(pipefd))
+		ft_failed_pipe(*ms_e, cmds);
 	if (is_builtin(cmd->words[0]) && !check_redir_pipe(cmd))
-		ft_execution(bin, cmd, pipefd, ms_environ);
+		ft_execution(bin, cmd, pipefd, ms_e);
 	else
-		forkit(bin, cmd, pipefd, ms_environ);
+	{
+		if (!(forkit(bin, cmd, pipefd, ms_e)))
+			ft_failed_fork(*ms_e, cmds, pipefd);
+	}
 	free(bin);
 	if (check_redir_pipe(cmd))
 		return (pipefd);

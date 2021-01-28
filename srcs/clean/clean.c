@@ -1,5 +1,15 @@
 #include "minishell.h"
 
+char	**free_enomem_table(char **tab, int i)
+{
+	i--;
+	i--;
+	while (i >= 0)
+		free(tab[i--]);
+	free(tab);
+	return (NULL);
+}
+
 void	clean_cmd(t_command *cmd)
 {
 	int i;
@@ -45,7 +55,7 @@ void	clean_path(char **path)
 		free(path);
 }
 
-void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, char *str)
+void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, void *str)
 {
 	if (ms_environ)
 		clean_path(ms_environ);
@@ -56,6 +66,30 @@ void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, cha
 	if (str)
 		free(str);
 	ft_putstr_fd("minishell: malloc failiure. exiting\n", 1);
+	system("leaks a.out");
+	exit(12);
+}
+
+void	ft_failed_pipe(char **ms_environ, t_command **commands)
+{
+	if (ms_environ)
+		clean_path(ms_environ);
+	if (commands)
+		clean_commands(commands);
+	ft_putstr_fd("minishell: pipe failiure. exiting\n", 1);
+	system("leaks a.out");
+	exit(12);
+}
+
+void	ft_failed_fork(char **ms_environ, t_command **commands, void *str)
+{
+	if (ms_environ)
+		clean_path(ms_environ);
+	if (commands)
+		clean_commands(commands);
+	if (str)
+		free(str);
+	ft_putstr_fd("minishell: fork failiure. exiting\n", 1);
 	system("leaks a.out");
 	exit(12);
 }

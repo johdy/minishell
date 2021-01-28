@@ -41,3 +41,12 @@ int		is_redirection_cmd(char *token)
 		return (1);
 	return (0);
 }
+
+int		is_envvar_ending(char c)
+{
+	if (ft_isalnum(c))
+		return (0);
+	if (c == '_')
+		return (0);
+	return (1);
+}
