@@ -26,14 +26,14 @@ typedef struct			s_command
 	int					prev_out;
 	int					nb_malloc;
 	int					abort;
+	int					error_exit;
 	struct s_command	*next;
 }						t_command;
 
 char	**init_env(void);
 void	clean_commands(t_command **cmds);
 void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, void *str);
-void	ft_failed_pipe(char **ms_environ, t_command **commands);
-void	ft_failed_fork(char **ms_environ, t_command **commands, void *str);
+void	ft_failed_what(char **ms_environ, t_command **commands, void *str, int id);
 void	clean_commands(t_command **cmds);
 void	clean_path(char **path);
 char	**free_enomem_table(char **tab, int i);
@@ -88,6 +88,12 @@ void	restore_std(int stdin, int stdout);
 int		find_eq(char *str);
 int		ft_xlstnew_dup(t_list **elem, char *content);
 int		ft_xlstadd_back_new(t_list **lex, char *content);
+int		check_redir_pipe(t_command *cmd);
+void	print_cmd_not_found(t_command *cmd, char **ms_environ);
+void	print_exec_error(t_command *cmd);
+void	print_fd_error(t_command *redir, t_command *cmd);
+int		is_builtin(char *cmd);
+void	wait_for_it(int *stt, pid_t p_pid);
 
 //Signaux
 void	sigc(int mask);

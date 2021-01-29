@@ -48,11 +48,11 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 	cmd = *commands;
 	while (cmd)
 	{
+		printf("%s\n", cmd->end_command);
 		if (cmd->size && !cmd->abort)
 		{
 			connect_pipe(pipefd, old_stds);
 			pipefd = execute_cmd(cmd, ms_environ, old_stds, commands);
-			//printf("%d printf%d\n", pipefd[0], pipefd[1]);
 		}
 		if (!ft_strcmp(cmd->end_command, "END"))
 			break ;
@@ -71,6 +71,8 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
 	if (!(*tojoin))
 		ft_putstr_fd("minishell > ", 1);
 	err = get_next_line(0, &line);
+	if (!line)
+		err = get_next_line(3, &line);
 	if (err == 0)
 		*tojoin = deal_ctrld(*tojoin, line, *ms_environ);
 	else

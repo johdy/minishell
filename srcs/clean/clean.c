@@ -70,18 +70,7 @@ void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, voi
 	exit(12);
 }
 
-void	ft_failed_pipe(char **ms_environ, t_command **commands)
-{
-	if (ms_environ)
-		clean_path(ms_environ);
-	if (commands)
-		clean_commands(commands);
-	ft_putstr_fd("minishell: pipe failiure. exiting\n", 1);
-	system("leaks a.out");
-	exit(12);
-}
-
-void	ft_failed_fork(char **ms_environ, t_command **commands, void *str)
+void	ft_failed_what(char **ms_environ, t_command **commands, void *str, int id)
 {
 	if (ms_environ)
 		clean_path(ms_environ);
@@ -89,7 +78,10 @@ void	ft_failed_fork(char **ms_environ, t_command **commands, void *str)
 		clean_commands(commands);
 	if (str)
 		free(str);
-	ft_putstr_fd("minishell: fork failiure. exiting\n", 1);
+	if (id == -1)
+		ft_putstr_fd("minishell: fork failiure. exiting\n", 1);
+	if (id == -12)
+		ft_putstr_fd("minishell: malloc failiure. exiting\n", 1);
 	system("leaks a.out");
 	exit(12);
 }

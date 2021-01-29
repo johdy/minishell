@@ -41,6 +41,7 @@ int		get_comm_infos(t_command **comm_addr, t_list **lex)
 	comm->size = 0;
 	comm->nb_malloc = 0;
 	comm->abort = 0;
+	comm->error_exit = 0;
 	first = *lex;
 	while (!is_end_command((char *)(*lex)->content))
 	{
