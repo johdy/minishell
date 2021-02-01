@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		*how_to_open(char *redir, char *file, int *fd_open)
+int			*how_to_open(char *redir, char *file, int *fd_open)
 {
 	if (!ft_strcmp(redir, "LOWER"))
 	{
@@ -11,7 +11,7 @@ int		*how_to_open(char *redir, char *file, int *fd_open)
 	else if (!ft_strcmp(redir, "GREATER"))
 	{
 		if (fd_open[1] != 1)
-			close(fd_open[1]);		
+			close(fd_open[1]);
 		fd_open[1] = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	}
 	else
@@ -23,21 +23,18 @@ int		*how_to_open(char *redir, char *file, int *fd_open)
 	return (fd_open);
 }
 
-void	deal_redirection(int *pipefd, t_command *cmd, int *fd_open)
+t_command	*deal_redirection(int *pipefd, t_command *cmd, int *fd_open)
 {
-	int fsti;
-	int fsto;
-
 	if (!ft_strcmp(cmd->end_command, "PIPE"))
 	{
-		close(pipefd[0]); /* close the unused read side */
-		dup2(pipefd[1], 1); /* connect the write side with stdout */
-		close(pipefd[1]); /* close the write side */
-		return ;
+		close(pipefd[0]);
+		dup2(pipefd[1], 1);
+		close(pipefd[1]);
+		return (cmd->next);
 	}
 	if (!ft_strcmp(cmd->end_command, "LOWER") && fd_open[0] > 0)
 		dup2(fd_open[0], 0);
 	else if (ft_strcmp(cmd->end_command, "LOWER") && fd_open[1] > 0)
 		dup2(fd_open[1], 1);
-	return ;
+	return (cmd->next);
 }

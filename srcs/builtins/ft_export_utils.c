@@ -4,11 +4,12 @@ int		check_export(char *str, int i)
 {
 	if (i == 0)
 		return (-1);
-	if (i == ft_strlen(str))
+	if (i == (int)ft_strlen(str))
 		return (0);
-	if (i == ft_strlen(str) - 1)
+	if (i == (int)ft_strlen(str) - 1)
 		return (1);
-	if ((str[0] >= 'a' && str[0] <= 'z') || (str[0] >= 'A' &&str[0] <= 'Z')  || str[0] == '_')
+	if ((str[0] >= 'a' && str[0] <= 'z')
+		|| (str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_')
 		return (1);
 	return (-1);
 }
@@ -28,22 +29,34 @@ int		deal_wrong_export(char *str, int i, int j, t_command *cmd)
 	return (j + 1);
 }
 
-void	append_env(char *str, char ***ms_environ)
+int		free_table(char **new_env, int i)
 {
-	int i;
-	char **env;
-	char **new_env;
+	free_enomem_table(new_env, ++i);
+	return (0);
+}
+
+int		append_env(char *str, char ***ms_environ)
+{
+	int		i;
+	char	**env;
+	char	**new_env;
 
 	env = *ms_environ;
 	i = 0;
 	while (env[i])
 		i++;
-	new_env = malloc(sizeof(char*) * (i + 2));
+	if (!(new_env = malloc(sizeof(char*) * (i + 2))))
+		return (0);
 	i = -1;
 	while (env[++i])
-		new_env[i] = ft_strdup(env[i]);
-	new_env[i] = ft_strdup(str);
+	{
+		if (!(new_env[i] = ft_strdup(env[i])))
+			return (free_table(new_env, i));
+	}
+	if (!(new_env[i] = ft_strdup(str)))
+		return (free_table(new_env, i));
 	new_env[i + 1] = NULL;
 	clean_path(env);
 	*ms_environ = new_env;
+	return (1);
 }

@@ -65,8 +65,6 @@ int			correct_multiple_arg_redir(t_command *cmd, t_command *cmd2)
 	new_w_tb[i + j - 1] = NULL;
 	free(cmd->words);
 	cmd->words = new_w_tb;
-	//if (!ft_strcmp(cmd->end_command, "LOWER"))
-	//	cmd2 = suppress_cmd(cmd2, cmd);
 	return (1);
 }
 

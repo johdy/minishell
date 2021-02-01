@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdyer <jdyer@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/01 16:20:29 by jdyer             #+#    #+#             */
+/*   Updated: 2021/02/01 16:20:31 by jdyer            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_command	*deal_next_link(t_command *cmd)
@@ -41,14 +53,12 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 {
 	t_command	*cmd;
 	int			*pipefd;
-	int			fd_open;
 	int			old_stds[2];
 
 	pipefd = NULL;
 	cmd = *commands;
 	while (cmd)
 	{
-		printf("%s\n", cmd->end_command);
 		if (cmd->size && !cmd->abort)
 		{
 			connect_pipe(pipefd, old_stds);
@@ -71,8 +81,6 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
 	if (!(*tojoin))
 		ft_putstr_fd("minishell > ", 1);
 	err = get_next_line(0, &line);
-	if (!line)
-		err = get_next_line(3, &line);
 	if (err == 0)
 		*tojoin = deal_ctrld(*tojoin, line, *ms_environ);
 	else
@@ -83,18 +91,16 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
 			*tojoin = NULL;
 		}
 		get_lex(line, &lex, *ms_environ);
-		//display_lex(&lex);
-		if (!get_commands(lex, &commands,*ms_environ))
+		if (!get_commands(lex, &commands, *ms_environ))
 			ft_failed_malloc(*ms_environ, &commands, &lex, 0);
 		commands->prev_out = *init_prev_out;
-		//display_commands(&commands);
 		ft_lstclear(&lex, &free);
 		*init_prev_out = deal_cmd(&commands, ms_environ);
 		clean_commands(&commands);
 	}
 }
 
-int		main(void)
+int			main(void)
 {
 	char	*tojoin;
 	char	**ms_environ;

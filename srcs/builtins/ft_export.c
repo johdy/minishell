@@ -6,7 +6,8 @@ int		*get_ordering(char **ms_environ, int size)
 	int i;
 	int cache;
 
-	ret = malloc(sizeof(int) * (size + 1));
+	if (!(ret = malloc(sizeof(int) * (size + 1))))
+		return (NULL);
 	i = -1;
 	while (++i < size)
 		ret[i] = i;
@@ -27,7 +28,7 @@ int		*get_ordering(char **ms_environ, int size)
 	return (ret);
 }
 
-void	display_export(char **ms_environ)
+int		display_export(char **ms_environ)
 {
 	int i;
 	int j;
@@ -37,9 +38,10 @@ void	display_export(char **ms_environ)
 	i = 0;
 	while (ms_environ[i])
 		i++;
-	class = get_ordering(ms_environ, i);
-	j = 0;
-	while (j < i)
+	if (!(class = get_ordering(ms_environ, i)))
+		return (0);
+	j = -1;
+	while (++j < i)
 	{
 		c = 0;
 		ft_putstr_fd("declare -x ", 1);
@@ -50,23 +52,20 @@ void	display_export(char **ms_environ)
 		while (ms_environ[class[j]][c])
 			write(1, ms_environ[class[j]] + c++, 1);
 		ft_putstr_fd("\"\n", 1);
-		j++;
 	}
 	free(class);
+	return (1);
 }
 
-void	ft_export(t_command *cmd, char ***ms_environ)
+int		ft_export(t_command *cmd, char ***ms_environ)
 {
-	int i;
-	int j;
-	int ms_env_pos;
-	char **ms_env_copy;
-	
+	int		i;
+	int		j;
+	int		ms_env_pos;
+	char	**ms_env_copy;
+
 	if (cmd->size == 1)
-	{
-		display_export(*ms_environ);
-		return ;
-	}
+		return (display_export(*ms_environ));
 	j = 0;
 	while (j < cmd->size - 1)
 	{
@@ -78,9 +77,11 @@ void	ft_export(t_command *cmd, char ***ms_environ)
 		else if (ms_env_copy[ms_env_pos])
 		{
 			free(ms_env_copy[ms_env_pos]);
-			ms_env_copy[ms_env_pos] = ft_strdup(cmd->words[1 + j++]);
+			if (!(ms_env_copy[ms_env_pos] = ft_strdup(cmd->words[1 + j++])))
+				return (0);
 		}
-		else
-			append_env(cmd->words[1 + j++], ms_environ);
+		else if (!(append_env(cmd->words[1 + j++], ms_environ)))
+			return (0);
 	}
+	return (1);
 }

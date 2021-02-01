@@ -13,12 +13,12 @@ int		*get_quotes_nb(t_list *first, int size)
 		if (!ft_strcmp((char*)first->content, "QUOTE"))
 		{
 			ret[i++] = 1;
-			first = first->next->next; //un next de moins que necess car next final
+			first = first->next->next;
 		}
 		else if (!ft_strcmp((char*)first->content, "DQUOTE"))
 		{
 			ret[i++] = 0;
-			first = first->next->next; //un next de moins que necess car next final
+			first = first->next->next;
 		}
 		else if (ft_strcmp((char*)first->content, "STICKIT"))
 			ret[i++] = 0;
@@ -41,7 +41,7 @@ int		*get_stickits_nb(t_list *first, int size)
 		if (is_q_dq_st((char*)first->content, 1, 1, 0))
 		{
 			ret[i++] = 0;
-			first = first->next->next; //un next de moins que necess car next final
+			first = first->next->next;
 		}
 		else if (!ft_strcmp((char*)first->content, "STICKIT"))
 			ret[i - 1] = 1;

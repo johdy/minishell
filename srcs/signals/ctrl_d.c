@@ -5,7 +5,7 @@ void	ctrld_exit(char **ms_environ, char *new_input)
 	clean_path(ms_environ);
 	free(new_input);
 	ft_putstr_fd("exit\n", 1);
-	exit(0);	
+	exit(0);
 }
 
 void	insert_in_new_input(char **new_input, char *reste, char **ms_environ)

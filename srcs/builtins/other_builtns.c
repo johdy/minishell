@@ -49,7 +49,7 @@ void	ft_exit(t_command *cmd, char **ms_environ, int *pipefd, char *bin)
 	exit(exit_code);
 }
 
-void	ft_pwd(t_command *cmd)
+int		ft_pwd(t_command *cmd)
 {
 	char *cwd;
 
@@ -57,12 +57,14 @@ void	ft_pwd(t_command *cmd)
 	{
 		ft_putstr_fd("pwd: too many arguments\n", 1);
 		cmd->out = 1;
-		return ;
+		return (1);
 	}
-	cwd = getcwd(NULL, 0);
+	if (!(cwd = getcwd(NULL, 0)))
+		return (0);
 	ft_putstr_fd(cwd, 1);
 	ft_putstr_fd("\n", 1);
 	free(cwd);
+	return (1);
 }
 
 void	ft_echo(t_command *cmd)

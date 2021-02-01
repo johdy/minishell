@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_commands.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdyer <jdyer@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/01 16:19:38 by jdyer             #+#    #+#             */
+/*   Updated: 2021/02/01 16:19:41 by jdyer            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int		is_q_dq_st(char *tok, int quote, int dquote, int stickit)
@@ -13,8 +25,8 @@ int		is_q_dq_st(char *tok, int quote, int dquote, int stickit)
 
 char	**comm_words_table(t_list *first, int size)
 {
-	char **ret;
-	int i;
+	char	**ret;
+	int		i;
 
 	i = 0;
 	if (!(ret = malloc(sizeof(char*) * (size + 1))))
@@ -65,7 +77,7 @@ int		get_commands(t_list *lex, t_command **commands, char **ms_environ)
 {
 	t_command	*comm;
 	t_command	*next_comm;
-	
+
 	if (!(comm = malloc(sizeof(t_command))))
 		ft_failed_malloc(ms_environ, 0, &lex, 0);
 	*commands = comm;
@@ -73,9 +85,8 @@ int		get_commands(t_list *lex, t_command **commands, char **ms_environ)
 	while (lex)
 	{
 		comm->next = NULL;
-		if (!(get_comm_infos(&comm, &lex)))
-			return (0);
-		if (!(comm->end_command = ft_strdup((char *)lex->content)))
+		if (!(get_comm_infos(&comm, &lex)) ||
+			!(comm->end_command = ft_strdup((char *)lex->content)))
 			return (0);
 		comm->nb_malloc++;
 		comm->out = 0;

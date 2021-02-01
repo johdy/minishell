@@ -19,33 +19,41 @@ void	ft_env(t_command *cmd, char **ms_environ)
 	}
 }
 
-void	ft_unset(t_command *cmd, char **ms_environ)
+int		delete_env(int i, char **ms_environ)
 {
-	int i;
-	char *tmp;
-	int j;
-	int	match;
+	if (!ms_environ[i])
+		return (1);
+	while (ms_environ[i])
+	{
+		free(ms_environ[i]);
+		if (ms_environ[i + 1])
+		{
+			if (!(ms_environ[i] = ft_strdup(ms_environ[i + 1])))
+				return (0);
+		}
+		i++;
+	}
+	free(ms_environ[i]);
+	ms_environ[i - 1] = NULL;
+	return (1);
+}
+
+int		ft_unset(t_command *cmd, char **ms_environ)
+{
+	int		i;
+	int		j;
+	int		match;
 
 	if (cmd->size == 1)
-		return ;
+		return (1);
 	j = 0;
 	while (j < cmd->size - 1)
 	{
 		match = 0;
 		i = fetch_env(cmd->words[1 + j], ms_environ, 0);
-		while (ms_environ[i])
-		{
-			match = 1;
-			free(ms_environ[i]);
-			if (ms_environ[i + 1])
-				ms_environ[i] = ft_strdup(ms_environ[i + 1]);
-			i++;
-		}
-		if (match)
-		{
-			free(ms_environ[i]);
-			ms_environ[i - 1] = NULL;
-		}
+		if (!(delete_env(i, ms_environ)))
+			return (0);
 		j++;
 	}
+	return (1);
 }

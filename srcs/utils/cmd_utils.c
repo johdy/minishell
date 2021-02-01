@@ -9,7 +9,7 @@ int		check_redir_pipe(t_command *cmd)
 	return (0);
 }
 
-void	print_cmd_not_found(t_command *cmd, char **ms_environ)
+void	print_cmd_not_found(t_command *cmd)
 {
 	restore_std(cmd->old_stdin, cmd->old_stdout);
 	ft_putstr_fd("minishell: ", 1);
@@ -32,16 +32,11 @@ void	print_exec_error(t_command *cmd)
 
 void	print_fd_error(t_command *redir, t_command *cmd)
 {
-	char *test;
-	
-	printf("%p\n", redir);
-	printf("%p\n", cmd);
 	restore_std(cmd->old_stdin, cmd->old_stdout);
 	ft_putstr_fd("minishell: ", 1);
 	ft_putstr_fd(redir->next->words[0], 1);
 	ft_putstr_fd(": ", 1);
 	ft_putstr_fd(strerror(errno), 1);
 	ft_putstr_fd("\n", 1);
-	get_next_line(0, &test);
 	errno = 113;
 }

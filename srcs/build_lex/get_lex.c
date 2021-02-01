@@ -24,7 +24,6 @@ int		deal_word(char *line, int *head_ptr, t_list **lex)
 	int		end_word;
 	int		size;
 	int		head;
-	char	*token;
 
 	head = *head_ptr;
 	end_word = 0;
@@ -71,14 +70,13 @@ void	get_lex(char *line, t_list **lex, char **ms_environ)
 {
 	int		head;
 	int		quotes[2];
-	t_list	*end;
 
 	head = 0;
 	quotes[0] = 0;
 	quotes[1] = 0;
 	if (!(ft_xlstnew_dup(lex, "START")))
 		ft_failed_malloc(ms_environ, 0, 0, line);
-	while (head < ft_strlen(line))
+	while (head < (int)ft_strlen(line))
 	{
 		if (!(sail_line(line, &head, quotes, lex)))
 			ft_failed_malloc(ms_environ, 0, lex, line);

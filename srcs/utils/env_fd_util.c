@@ -6,7 +6,7 @@ int		fetch_env(char *id, char **ms_environ, int size)
 	int match;
 	int sizecomp;
 
-	sizecomp = (size == 0 ? ft_strlen(id) : size);
+	sizecomp = (size == 0 ? (int)ft_strlen(id) : size);
 	match = 0;
 	i = 0;
 	while (!match)
@@ -15,7 +15,8 @@ int		fetch_env(char *id, char **ms_environ, int size)
 			i++;
 		else if (ms_environ[i])
 		{
-			if (ft_strlen(ms_environ[i]) > sizecomp && ms_environ[i][sizecomp] == '=')
+			if ((int)ft_strlen(ms_environ[i]) > sizecomp &&
+				ms_environ[i][sizecomp] == '=')
 				match = 1;
 			else
 				i++;

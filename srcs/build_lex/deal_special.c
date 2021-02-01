@@ -84,8 +84,6 @@ int		put_quoted_word(int *quotes, t_list **lex, int *head, char *line)
 
 int		deal_quotes(char *line, int *head_ptr, int *quotes, t_list **lex)
 {
-	char *token;
-
 	if (*head_ptr != 0 && line[*head_ptr - 1] != ' ' &&
 		line[*head_ptr - 1] != '	')
 	{

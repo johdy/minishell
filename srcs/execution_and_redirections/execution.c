@@ -1,90 +1,57 @@
 #include "minishell.h"
 
-void	exec_builtin(t_command *cmd, char ***ms_environ, int *pipefd, char *bin)
-{	
-	if (!ft_strcmp(cmd->words[0], "echo"))
-		ft_echo(cmd);
-	if (!ft_strcmp(cmd->words[0], "cd"))
-		ft_cd(cmd, *ms_environ);
-	if (!ft_strcmp(cmd->words[0], "pwd"))
-		ft_pwd(cmd);
-	if (!ft_strcmp(cmd->words[0], "exit"))
-		ft_exit(cmd, *ms_environ, pipefd, bin);
-	if (!ft_strcmp(cmd->words[0], "env"))
-		ft_env(cmd, *ms_environ);
-	if (!ft_strcmp(cmd->words[0], "unset"))
-		ft_unset(cmd, *ms_environ);
-	if (!ft_strcmp(cmd->words[0], "export"))
-		ft_export(cmd, ms_environ);
-	if (!ft_strcmp(cmd->end_command, "PIPE"))
-		exit(0);
-}
-
-int		clean_op_fd(int *fd_open, int ret)
+int		ft_execve(char *bin, t_command *cmd, char ***ms_environ, int **fds)
 {
-	if (fd_open[0] != 0 && fd_open[0] != -1)
-		close (fd_open[0]);
-	if (fd_open[1] != 1)
-		close (fd_open[1] && fd_open[0] != -1);
-	free(fd_open);
-	return (ret);	
-}
+	int *pipefd;
+	int *fd_open;
+	int ret;
 
-int		*get_fd_redir(int *fd_open, t_command *cmd)
-{
-	t_command *redir;
-
-	redir = cmd;
-	if (!(fd_open = malloc(sizeof(int) * 2)))
-		return (NULL);
-	fd_open[0] = 0;
-	fd_open[1] = 1;
-	while (is_redirection_cmd(redir->end_command) && (fd_open[0] >= 0 || fd_open[1] >= 0))
+	fd_open = fds[0];
+	pipefd = fds[1];
+	if (is_builtin(cmd->words[0]))
 	{
-		fd_open = how_to_open(redir->end_command, redir->next->words[0], fd_open);
-		if (fd_open[0] == -1 || fd_open[1] == -1)
-			print_fd_error(redir, cmd);
-		redir = redir->next;
+		if (!ft_strcmp(cmd->words[0], "exit"))
+		{
+			clean_op_fd(fd_open, 1);
+			restore_std(cmd->old_stdin, cmd->old_stdout);
+		}
+		ret = exec_builtin(cmd, ms_environ, pipefd, bin);
+		return (ret);
 	}
-	return (fd_open);
+	free(fd_open);
+	execve(bin, cmd->words, *ms_environ);
+	return (0);
 }
 
 int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
-	int *fd_open;
-	t_command *redir;
-	char *test;
+	int			*fd_open;
+	t_command	*redir;
+	int			*fds[2];
 
+	fd_open = NULL;
 	if (!(fd_open = get_fd_redir(fd_open, cmd)))
 		return (-12);
 	if (fd_open[0] == -1 || fd_open[1] == -1)
 		return (clean_op_fd(fd_open, 1));
 	redir = cmd;
-	while (is_redirection_cmd(redir->end_command))
-	{
-		deal_redirection(pipefd, redir, fd_open);
-		redir = redir->next;
-	}
-	if (!ft_strcmp(redir->end_command, "PIPE") && fd_open[1] == 1)
-		deal_redirection(pipefd, redir, fd_open);
-//	else if (!ft_strcmp(redir->end_command, "PIPE"))
-//		old_fds = deal_redirection(pipefd, cmd, fd_open, old_fds);
+	while (is_redirection_cmd(redir->end_command) ||
+		!ft_strcmp(redir->end_command, "PIPE"))
+		redir = deal_redirection(pipefd, redir, fd_open);
 	if (!bin && !is_builtin(cmd->words[0]))
 	{
-		print_cmd_not_found(cmd, *ms_environ);
+		print_cmd_not_found(cmd);
 		return (clean_op_fd(fd_open, 1));
 	}
-	if (is_builtin(cmd->words[0]))
-		exec_builtin(cmd, ms_environ, pipefd, bin);
-	else if (execve(bin, cmd->words, *ms_environ) < 0)
-		return (clean_op_fd(fd_open, 0));
-	return (clean_op_fd(fd_open, 1));
+	fds[0] = fd_open;
+	fds[1] = pipefd;
+	return (clean_op_fd(fd_open, ft_execve(bin, cmd, ms_environ, fds)));
 }
 
 int		forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
-	pid_t p_pid;
-	int stt;
+	pid_t	p_pid;
+	int		stt;
 
 	p_pid = fork();
 	if (p_pid == 0)
@@ -124,16 +91,15 @@ int		launch_execution(t_command *cmd, char *bin, char ***ms_e, int *pipefd)
 	return (0);
 }
 
-int		*execute_cmd(t_command *cmd, char ***ms_e, int *old_stds, t_command **cmds)
+int		*execute_cmd(t_command *cmd, char ***ms_e, int *o_std, t_command **cmds)
 {
-	char **path;
-	char *bin;
-	int *pipefd;
-	int error_exec;
+	char	**path;
+	char	*bin;
+	int		*pipefd;
+	int		error_exec;
 
-	printf("%d\n", cmd->error_exit);
-	cmd->old_stdin = old_stds[0];
-	cmd->old_stdout = old_stds[1];
+	cmd->old_stdin = o_std[0];
+	cmd->old_stdout = o_std[1];
 	path = get_path(*ms_e, cmds);
 	crct_cmd(cmd, *ms_e, cmds, path);
 	bin = get_bin(cmd->words[0], path, *ms_e, cmds);
@@ -148,7 +114,6 @@ int		*execute_cmd(t_command *cmd, char ***ms_e, int *old_stds, t_command **cmds)
 		return (pipefd);
 	else if (errno != 113)
 		restore_std(cmd->old_stdin, cmd->old_stdout);
-	printf("%d\n", errno);
 	close(pipefd[0]);
 	close(pipefd[1]);
 	free(pipefd);

@@ -60,33 +60,30 @@ int		put_ret_nb(t_command *cmd, int i, int j)
 	return (1);
 }
 
-int		replace_env(t_command *cmd, int i, int j, char **ms_environ)
+int		replace_env(t_command *cmd, int i, int j, char **ms_e)
 {
-	int sizew;
-	int w;
-	char *new_word;
-	char *tocopy;
+	int		szw;
+	int		w;
+	char	*new_word;
 
 	j++;
-	sizew = 0;
-	while (!is_envvar_ending(cmd->words[i][j + sizew]) &&
-		cmd->words[i][j + sizew])
-		sizew++;
-	w = fetch_env(cmd->words[i] + j, ms_environ, sizew);
+	szw = 0;
+	while (!is_envvar_ending(cmd->words[i][j + szw]) &&
+		cmd->words[i][j + szw])
+		szw++;
+	w = fetch_env(cmd->words[i] + j, ms_e, szw);
 	j--;
-	if (!ms_environ[w] && cmd->words[i][j + 1] != '?')
+	if (!ms_e[w] && cmd->words[i][j + 1] != '?')
 		return (0);
-	else if (!ms_environ[w])
+	else if (!ms_e[w])
 		return (put_ret_nb(cmd, i, j));
-	if (!(new_word = malloc(ft_strlen(cmd->words[i]) - (sizew + 1) +
-		ft_strlen(ms_environ[w]) - (sizew + 1) + 1)))
+	if (!(new_word = malloc(ft_strlen(cmd->words[i]) - (szw + 1) +
+		ft_strlen(ms_e[w]) - (szw + 1) + 1)))
 		return (-12);
 	ft_memcpy(new_word, cmd->words[i], j);
-	ft_memcpy(new_word + j, ms_environ[w] + sizew + 1,
-		ft_strlen(ms_environ[w]) - (sizew + 1));
-	ft_strlcpy(new_word + j + ft_strlen(ms_environ[w]) - (sizew + 1),
-		cmd->words[i] + sizew + j + 1,
-		ft_strlen(cmd->words[i]) - (sizew + 1) + 1);	
+	ft_memcpy(new_word + j, ms_e[w] + szw + 1, ft_strlen(ms_e[w]) - (szw + 1));
+	ft_strlcpy(new_word + j + ft_strlen(ms_e[w]) - (szw + 1), cmd->words[i] +
+		szw + j + 1, ft_strlen(cmd->words[i]) - (szw + 1) + 1);
 	free(cmd->words[i]);
 	cmd->words[i] = new_word;
 	return (1);

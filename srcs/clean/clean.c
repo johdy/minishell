@@ -54,34 +54,3 @@ void	clean_path(char **path)
 	if (path)
 		free(path);
 }
-
-void	ft_failed_malloc(char **ms_environ, t_command **commands, t_list **lex, void *str)
-{
-	if (ms_environ)
-		clean_path(ms_environ);
-	if (commands)
-		clean_commands(commands);
-	if (lex)
-		ft_lstclear(lex, &free);
-	if (str)
-		free(str);
-	ft_putstr_fd("minishell: malloc failiure. exiting\n", 1);
-	system("leaks a.out");
-	exit(12);
-}
-
-void	ft_failed_what(char **ms_environ, t_command **commands, void *str, int id)
-{
-	if (ms_environ)
-		clean_path(ms_environ);
-	if (commands)
-		clean_commands(commands);
-	if (str)
-		free(str);
-	if (id == -1)
-		ft_putstr_fd("minishell: fork failiure. exiting\n", 1);
-	if (id == -12)
-		ft_putstr_fd("minishell: malloc failiure. exiting\n", 1);
-	system("leaks a.out");
-	exit(12);
-}
