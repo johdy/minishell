@@ -18,7 +18,7 @@
 # include <sys/uio.h>
 # define BUFFER_SIZE 4096
 
-int		get_next_line(int fd, char **line);
+int		get_next_line(int fd, char **line, char **reste);
 int		ft_strilen(char *str);
 int		get_chariot(char *str);
 char	*f_strcat(char **str1, char *str2, int nb);

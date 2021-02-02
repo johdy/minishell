@@ -68,10 +68,12 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 			break ;
 		cmd = deal_next_link(cmd);
 	}
+	if (pipefd)
+		free(pipefd);
 	return (cmd->out);
 }
 
-void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
+void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out, char *reste)
 {
 	char		*line;
 	int			err;
@@ -80,7 +82,8 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
 
 	if (!(*tojoin))
 		ft_putstr_fd("minishell > ", 1);
-	err = get_next_line(0, &line);
+	err = get_next_line(0, &line, &reste);
+	free(reste);
 	if (err == 0)
 		*tojoin = deal_ctrld(*tojoin, line, *ms_environ);
 	else
@@ -100,17 +103,20 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out)
 	}
 }
 
-int			main(void)
+int			main(int argc, char **argv, char **envp)
 {
-	char	*tojoin;
-	char	**ms_environ;
-	int		init_prev_out;
+	char		*tojoin;
+	char		**ms_environ;
+	int			init_prev_out;
+	static char	*reste = NULL;
 
-	ms_environ = init_env();
+	(void)argc;
+	(void)argv;
+	ms_environ = init_env(envp);
 	tojoin = NULL;
 	signal(SIGINT, sigc);
 	signal(SIGQUIT, sigbs);
 	init_prev_out = 0;
 	while (1)
-		main_loop(&ms_environ, &tojoin, &init_prev_out);
+		main_loop(&ms_environ, &tojoin, &init_prev_out, reste);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execution.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdyer <jdyer@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/02 11:00:54 by jdyer             #+#    #+#             */
+/*   Updated: 2021/02/02 11:00:57 by jdyer            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int		ft_execve(char *bin, t_command *cmd, char ***ms_environ, int **fds)
@@ -32,7 +44,7 @@ int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 	fd_open = NULL;
 	if (!(fd_open = get_fd_redir(fd_open, cmd)))
 		return (-12);
-	if (fd_open[0] == -1 || fd_open[1] == -1)
+	if (fd_open[0] == -1 || fd_open[1] == -1 || fd_open[0] == -2)
 		return (clean_op_fd(fd_open, 1));
 	redir = cmd;
 	while (is_redirection_cmd(redir->end_command) ||

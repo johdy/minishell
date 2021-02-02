@@ -82,9 +82,8 @@ int	read_the_file(int fd, char **line, char **reste)
 	return (0);
 }
 
-int	get_next_line(int fd, char **line)
+int	get_next_line(int fd, char **line, char **reste)
 {
-	static char	*reste = NULL;
 	int			check;
 
 	check = 2;
@@ -92,9 +91,9 @@ int	get_next_line(int fd, char **line)
 		return (-1);
 	*line = malloc(sizeof(char));
 	**line = '\0';
-	if (ft_strilen(reste) > 0 && get_chariot(reste) != ft_strilen(reste))
-		return (flush_reste(&reste, line));
+	if (ft_strilen(*reste) > 0 && get_chariot(*reste) != ft_strilen(*reste))
+		return (flush_reste(reste, line));
 	while (check == 2)
-		check = read_the_file(fd, line, &reste);
+		check = read_the_file(fd, line, reste);
 	return (check);
 }
