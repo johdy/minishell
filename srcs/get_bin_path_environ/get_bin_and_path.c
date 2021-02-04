@@ -42,8 +42,11 @@ char	*get_bin(char *cmd, char **path, char **ms_environ, t_command **cmds)
 	int			i;
 
 	i = -1;
+	if (stat(cmd, &buf) == 0)
+		return (ft_strdup(cmd));
 	while (path && path[++i])
 	{
+		printf("%s\n", path[i]);
 		if (!(tmp = ft_strjoin(path[i], "/")))
 		{
 			clean_path(path);
