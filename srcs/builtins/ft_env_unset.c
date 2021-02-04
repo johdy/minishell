@@ -62,6 +62,7 @@ int		ft_unset(t_command *cmd, char **ms_environ)
 	while (j < cmd->size - 1)
 	{
 		match = 0;
+		deal_wrong_env_var(cmd->words[1 + j], -2, 0, cmd);
 		i = fetch_env(cmd->words[1 + j], ms_environ, 0);
 		if (!(delete_env(i, ms_environ)))
 			return (0);

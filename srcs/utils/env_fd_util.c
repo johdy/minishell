@@ -39,6 +39,45 @@ int		fetch_env(char *id, char **ms_environ, int size)
 	return (i);
 }
 
+int		check_env_var(char *str, int i)
+{
+	int cpt;
+
+	cpt = 1;
+	if (i == 0)
+		return (-1);
+	if (!(str[0] >= 'a' && str[0] <= 'z')
+		&& !(str[0] >= 'A' && str[0] <= 'Z') && !(str[0] == '_'))
+		return (-1);
+	while (str[cpt])
+	{
+		if (!(str[cpt] >= 'a' && str[cpt] <= 'z') && !(str[cpt] == '=')
+			&& !(str[cpt] >= 'A' && str[cpt] <= 'Z') && !(str[cpt] == '_'))
+			return (-1);
+		cpt++;
+	}
+	if (i == (int)ft_strlen(str))
+		return (0);
+	if (i == (int)ft_strlen(str) - 1)
+		return (1);
+	return (1);
+}
+
+int		deal_wrong_env_var(char *str, int i, int j, t_command *cmd)
+{
+	int err_nb;
+
+	err_nb = check_env_var(str, i);
+	if (err_nb == -1)
+	{
+		ft_putstr_fd("export: `", 1);
+		ft_putstr_fd(str, 1);
+		ft_putstr_fd("': not a valid identifier\n", 1);
+		cmd->out = 1;
+	}
+	return (j + 1);
+}
+
 void	restore_std(int stdin, int stdout)
 {
 	if (stdin != 0)

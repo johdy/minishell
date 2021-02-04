@@ -62,23 +62,25 @@ int		ft_execution(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 
 int		forkit(char *bin, t_command *cmd, int *pipefd, char ***ms_environ)
 {
-	pid_t	p_pid;
 	int		stt;
 
-	p_pid = fork();
-	if (p_pid == 0)
+	g_sig.fork = fork();
+	if (g_sig.fork == 0)
 	{
-		signal(SIGINT, SIG_DFL);
 		if (!ft_execution(bin, cmd, pipefd, ms_environ))
 			print_exec_error(cmd);
 		exit(127);
 	}
-	else if (p_pid > 0)
-		wait_for_it(&stt, p_pid);
+	else if (g_sig.fork > 0)
+		waitpid(g_sig.fork, &stt, 0);
 	else
 		return (0);
 	if (WIFEXITED(stt))
 		cmd->out = WEXITSTATUS(stt);
+	if (g_sig.ret)
+		cmd->out = g_sig.ret;
+	g_sig.ret = 0;
+	g_sig.fork = 0;
 	signal(SIGINT, sigc);
 	signal(SIGQUIT, sigbs);
 	return (1);

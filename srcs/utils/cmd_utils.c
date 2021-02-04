@@ -52,3 +52,23 @@ void	print_fd_error(t_command *redir, t_command *cmd)
 	ft_putstr_fd("\n", 1);
 	errno = 113;
 }
+
+int		print_syntax_error(t_command *cmd, t_command *first)
+{
+	ft_putstr_fd("minishell: syntax error ", 1);
+	ft_putstr_fd("near unexpected token ", 1);
+	if (!ft_strcmp(cmd->end_command, "GREATER"))
+		ft_putstr_fd("'>'\n", 1);
+	if (!ft_strcmp(cmd->end_command, "LOWER"))
+		ft_putstr_fd("'<'\n", 1);
+	if (!ft_strcmp(cmd->end_command, "DGREATER"))
+		ft_putstr_fd("'>>'\n", 1);
+	if (!ft_strcmp(cmd->end_command, "PIPE"))
+		ft_putstr_fd("'|'\n", 1);
+	if (!ft_strcmp(cmd->end_command, "SC"))
+		ft_putstr_fd("';'\n", 1);
+	if (!ft_strcmp(cmd->end_command, "END"))
+		ft_putstr_fd("'newline'\n", 1);
+	first->out = 258;
+	return (1);
+}

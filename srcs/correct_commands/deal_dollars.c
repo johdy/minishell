@@ -54,6 +54,8 @@ int		put_ret_nb(t_command *cmd, int i, int j)
 	char *tocopy;
 	char *new_word;
 
+	if (g_sig.ret == 1)
+		cmd->prev_out = 1;
 	if (!(tocopy = ft_itoa(cmd->prev_out)))
 		return (-12);
 	if (!(new_word = malloc(ft_strlen(cmd->words[i]) - 2

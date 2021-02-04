@@ -43,6 +43,12 @@ typedef struct			s_command
 	struct s_command	*next;
 }						t_command;
 
+typedef	struct 			s_sig
+{
+	pid_t				fork;
+	int					ret;	
+}						t_sig;
+
 int						*execute_cmd(t_command *cmd, char ***ms_environ,
 						int *old_stds, t_command **commands);
 
@@ -98,9 +104,9 @@ void					ft_env(t_command *cmd, char **ms_environ);
 int						ft_unset(t_command *cmd, char **ms_environ);
 int						ft_export(t_command *cmd, char ***ms_environ);
 int						append_env(char *str, char ***ms_environ);
-int						deal_wrong_export(char *str, int i, int j,
+int						deal_wrong_env_var(char *str, int i, int j,
 						t_command *cmd);
-int						check_export(char *str, int i);
+int						check_env_var(char *str, int i);
 
 /*
 **Correct
@@ -112,6 +118,7 @@ void					stick_words(t_command *cmd, t_command **commands,
 void					lookfor_env(t_command *cmd, char **ms_environ,
 						t_command **commands, char **path);
 int						is_envvar_ending(char c);
+int						syntax_error_check(t_command **commands, char **ms_e);
 
 /*
 **Utils
@@ -130,8 +137,8 @@ int						check_redir_pipe(t_command *cmd);
 void					print_cmd_not_found(t_command *cmd);
 void					print_exec_error(t_command *cmd);
 void					print_fd_error(t_command *redir, t_command *cmd);
+int						print_syntax_error(t_command *cmd, t_command *first);
 int						is_builtin(char *cmd);
-void					wait_for_it(int *stt, pid_t p_pid);
 
 /*
 **Signaux
@@ -157,4 +164,5 @@ void					clean_commands(t_command **cmds);
 void					clean_path(char **path);
 char					**free_enomem_table(char **tab, int i);
 
+extern t_sig			g_sig;
 #endif

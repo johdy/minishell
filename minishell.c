@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+t_sig	g_sig;
+
 t_command	*deal_next_link(t_command *cmd)
 {
 	int redirected;
@@ -54,12 +56,14 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 	t_command	*cmd;
 	int			*pipefd;
 	int			old_stds[2];
+	int			synt_err;
 
 	pipefd = NULL;
 	cmd = *commands;
-	while (cmd)
+	synt_err = syntax_error_check(commands, *ms_environ);
+	while (cmd && !synt_err)
 	{
-		if (cmd->size && !cmd->abort)
+		if ((cmd->size || is_redirection_cmd(cmd->end_command)) && !cmd->abort)
 		{
 			connect_pipe(pipefd, old_stds);
 			pipefd = execute_cmd(cmd, ms_environ, old_stds, commands);
@@ -117,6 +121,8 @@ int			main(int argc, char **argv, char **envp)
 	signal(SIGINT, sigc);
 	signal(SIGQUIT, sigbs);
 	init_prev_out = 0;
+	g_sig.fork = 0;
+	g_sig.ret = 0;
 	while (1)
 		main_loop(&ms_environ, &tojoin, &init_prev_out, reste);
 }
