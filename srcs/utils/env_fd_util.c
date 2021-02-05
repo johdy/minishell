@@ -42,7 +42,9 @@ int		fetch_env(char *id, char **ms_environ, int size)
 int		check_env_var(char *str, int i)
 {
 	int cpt;
+	int eq;
 
+	eq = 0;
 	cpt = 1;
 	if (i == 0)
 		return (-1);
@@ -51,9 +53,11 @@ int		check_env_var(char *str, int i)
 		return (-1);
 	while (str[cpt])
 	{
-		if (!(str[cpt] >= 'a' && str[cpt] <= 'z') && !(str[cpt] == '=')
+		if (!eq && !(str[cpt] >= 'a' && str[cpt] <= 'z') && !(str[cpt] == '=')
 			&& !(str[cpt] >= 'A' && str[cpt] <= 'Z') && !(str[cpt] == '_'))
 			return (-1);
+		if (str[cpt] == '=')
+			eq = 1;
 		cpt++;
 	}
 	if (i == (int)ft_strlen(str))

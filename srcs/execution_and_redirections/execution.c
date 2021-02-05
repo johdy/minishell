@@ -30,7 +30,6 @@ int		ft_execve(char *bin, t_command *cmd, char ***ms_environ, int **fds)
 		ret = exec_builtin(cmd, ms_environ, pipefd, bin);
 		return (ret);
 	}
-	free(fd_open);
 	execve(bin, cmd->words, *ms_environ);
 	return (0);
 }

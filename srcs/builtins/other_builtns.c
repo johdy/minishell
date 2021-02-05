@@ -44,7 +44,7 @@ void	ft_exit(t_command *cmd, char **ms_environ, int *pipefd, char *bin)
 	{
 		if (cmd->size > 2)
 		{
-			ft_putstr_fd("minibash: exit: too many arguments\n", 1);
+			ft_putstr_fd("minishell: exit: too many arguments\n", 1);
 			cmd->out = 1;
 			return ;
 		}
@@ -57,7 +57,6 @@ void	ft_exit(t_command *cmd, char **ms_environ, int *pipefd, char *bin)
 	clean_path(ms_environ);
 	free(pipefd);
 	free(bin);
-	system("leaks a.out");
 	exit(exit_code);
 }
 
