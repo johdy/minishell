@@ -31,7 +31,7 @@ int		print_num_arg_req(char *str)
 	ft_putstr_fd("minibash: exit: ", 1);
 	ft_putstr_fd(str, 1);
 	ft_putstr_fd(": numeric argument required\n", 1);
-	return (255);
+	return (2);
 }
 
 void	ft_exit(t_command *cmd, char **ms_environ, int *pipefd, char *bin)
