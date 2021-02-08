@@ -14,17 +14,14 @@
 # define MINISHELL_H
 # include "get_next_line.h"
 # include "libft.h"
-# include <stdio.h>
-# include <stdlib.h>
-# include <sys/stat.h>
-# include <fcntl.h>
-# include <string.h>
-# include <sys/errno.h>
-# include <signal.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <string.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
+# include <sys/errno.h>
 
 typedef struct			s_command
 {
@@ -125,8 +122,6 @@ int						syntax_error_check(t_command **commands, char **ms_e);
 */
 int						is_end_command(char *token);
 int						is_redirection_cmd(char *token);
-void					display_commands(t_command **commands);
-void					display_lex(t_list **lex);
 int						ft_strcmp(char *s1, char *s2);
 int						fetch_env(char *id, char **ms_environ, int size);
 void					restore_std(int stdin, int stdout);

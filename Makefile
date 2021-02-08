@@ -16,8 +16,6 @@ CC = gcc
 
 CFLAGS = -g -Wall -Werror -Wextra
 
-MAKEBONUS = make bonus
-
 SRCS = srcs/build_commands/get_commands.c	\
 	srcs/build_commands/get_quotes_stickits_infos.c	\
 	srcs/build_lex/deal_special.c	\
@@ -43,7 +41,6 @@ SRCS = srcs/build_commands/get_commands.c	\
 	srcs/signals/signals_handling.c	\
 	srcs/utils/char_utils.c	\
 	srcs/utils/cmd_utils.c	\
-	srcs/utils/display.c	\
 	srcs/utils/env_fd_util.c	\
 	srcs/utils/ft_strcmp.c	\
 	srcs/utils/get_next_line.c	\
