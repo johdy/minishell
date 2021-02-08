@@ -42,7 +42,7 @@ char	*get_bin(char *cmd, char **path, char **ms_environ, t_command **cmds)
 	int			i;
 
 	i = -1;
-	while (path && path[++i])
+	while (path && path[++i] && ft_strlen(cmd))
 	{
 		if (!(tmp = ft_strjoin(path[i], "/")))
 		{

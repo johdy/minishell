@@ -43,10 +43,10 @@ typedef struct			s_command
 	struct s_command	*next;
 }						t_command;
 
-typedef	struct 			s_sig
+typedef	struct			s_sig
 {
 	pid_t				fork;
-	int					ret;	
+	int					ret;
 }						t_sig;
 
 int						*execute_cmd(t_command *cmd, char ***ms_environ,
@@ -148,7 +148,7 @@ void					sigc_fork(int mask);
 void					sigbs(int mask);
 void					sigbs_fork(int mask);
 void					insert_in_new_input(char **new_input,
-						char *reste, char **ms_environ);
+						char **reste, char **ms_environ);
 char					*deal_ctrld(char *tojoin, char *new_input,
 						char **ms_environ);
 

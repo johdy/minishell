@@ -20,16 +20,17 @@ void	ctrld_exit(char **ms_environ, char *new_input)
 	exit(0);
 }
 
-void	insert_in_new_input(char **new_input, char *reste, char **ms_environ)
+void	insert_in_new_input(char **new_input, char **reste, char **ms_environ)
 {
 	char *tmp;
 
-	tmp = ft_strjoin(reste, *new_input);
-	free(reste);
+	tmp = ft_strjoin(*reste, *new_input);
+	free(*reste);
 	free(*new_input);
 	if (tmp == NULL)
 		ft_failed_malloc(ms_environ, 0, 0, 0);
 	*new_input = tmp;
+	*reste = NULL;
 }
 
 char	*deal_ctrld(char *tojoin, char *new_input, char **ms_environ)
@@ -53,6 +54,6 @@ char	*deal_ctrld(char *tojoin, char *new_input, char **ms_environ)
 			ft_failed_malloc(ms_environ, 0, 0, 0);
 		return (ret);
 	}
-	insert_in_new_input(&new_input, tojoin, ms_environ);
+	insert_in_new_input(&new_input, &tojoin, ms_environ);
 	return (new_input);
 }

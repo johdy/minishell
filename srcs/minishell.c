@@ -77,7 +77,7 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 	return (cmd->out);
 }
 
-void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out, char *reste)
+void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out, char *rst)
 {
 	char		*line;
 	int			err;
@@ -86,17 +86,14 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out, char *res
 
 	if (!(*tojoin))
 		ft_putstr_fd("minishell > ", 1);
-	err = get_next_line(0, &line, &reste);
-	free(reste);
+	err = get_next_line(0, &line, &rst);
+	free(rst);
 	if (err == 0)
 		*tojoin = deal_ctrld(*tojoin, line, *ms_environ);
 	else
 	{
 		if (*tojoin)
-		{
-			insert_in_new_input(&line, *tojoin, *ms_environ);
-			*tojoin = NULL;
-		}
+			insert_in_new_input(&line, tojoin, *ms_environ);
 		get_lex(line, &lex, *ms_environ);
 		if (!get_commands(lex, &commands, *ms_environ))
 			ft_failed_malloc(*ms_environ, &commands, &lex, 0);
