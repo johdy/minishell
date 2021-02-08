@@ -6,7 +6,7 @@
 /*   By: jdyer <jdyer@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/01 16:20:29 by jdyer             #+#    #+#             */
-/*   Updated: 2021/02/01 16:20:31 by jdyer            ###   ########.fr       */
+/*   Updated: 2021/02/08 11:45:32 by jdyer            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int			deal_cmd(t_command **commands, char ***ms_environ)
 	return (cmd->out);
 }
 
-void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out, char *rst)
+void		main_loop(char ***ms_e, char **tojoin, int *init_pout, char *rst)
 {
 	char		*line;
 	int			err;
@@ -89,17 +89,17 @@ void		main_loop(char ***ms_environ, char **tojoin, int *init_prev_out, char *rst
 	err = get_next_line(0, &line, &rst);
 	free(rst);
 	if (err == 0)
-		*tojoin = deal_ctrld(*tojoin, line, *ms_environ);
+		*tojoin = deal_ctrld(*tojoin, line, *ms_e);
 	else
 	{
 		if (*tojoin)
-			insert_in_new_input(&line, tojoin, *ms_environ);
-		get_lex(line, &lex, *ms_environ);
-		if (!get_commands(lex, &commands, *ms_environ))
-			ft_failed_malloc(*ms_environ, &commands, &lex, 0);
-		commands->prev_out = *init_prev_out;
+			insert_in_new_input(&line, tojoin, *ms_e);
+		get_lex(line, &lex, *ms_e);
+		if (!get_commands(lex, &commands, *ms_e))
+			ft_failed_malloc(*ms_e, &commands, &lex, 0);
+		commands->prev_out = *init_pout;
 		ft_lstclear(&lex, &free);
-		*init_prev_out = deal_cmd(&commands, ms_environ);
+		*init_pout = deal_cmd(&commands, ms_e);
 		clean_commands(&commands);
 	}
 }
