@@ -22,7 +22,7 @@ int		ft_execve(char *bin, t_command *cmd, char ***ms_environ, int **fds)
 	pipefd = fds[1];
 	if (is_builtin(cmd->words[0]))
 	{
-		if (!ft_strcmp(cmd->words[0], "exit"))
+		if (!ft_strcmp(cmd->words[0], "exit") && cmd->size < 3)
 		{
 			clean_op_fd(fd_open, 1);
 			restore_std(cmd->old_stdin, cmd->old_stdout);
