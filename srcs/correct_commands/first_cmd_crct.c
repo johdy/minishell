@@ -78,9 +78,13 @@ int			look_for_err(t_command **cmds)
 	{
 		if (cmd->size == 0)
 		{
-			if (ft_strcmp(cmd->end_command, "END") &&
-				ft_strcmp(prev_end, "SC"))
+			if (ft_strcmp(cmd->end_command, "END"))
 				return (print_syntax_error(cmd, *cmds));
+		}
+		else if (is_redirection_cmd(cmd->end_command))
+		{
+			if (cmd->next && cmd->next->size == 0)
+				return (print_syntax_error(cmd->next, *cmds));
 		}
 		prev_end = cmd->end_command;
 		cmd = cmd->next;
