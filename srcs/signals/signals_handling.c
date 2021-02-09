@@ -23,7 +23,7 @@ void	sigc(int mask)
 	else
 	{
 		ft_putstr_fd("\nminishell > ", 1);
-		g_sig.ret = 130;
+		g_sig.ret = 1;
 	}
 }
 
