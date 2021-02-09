@@ -64,12 +64,6 @@ int		ft_pwd(t_command *cmd)
 {
 	char *cwd;
 
-	if (cmd->size > 1)
-	{
-		ft_putstr_fd("pwd: too many arguments\n", 1);
-		cmd->out = 1;
-		return (1);
-	}
 	if (!(cwd = getcwd(NULL, 0)))
 		return (0);
 	ft_putstr_fd(cwd, 1);
