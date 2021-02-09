@@ -15,7 +15,7 @@
 void	sigc(int mask)
 {
 	(void)mask;
-	if (g_sig.fork != 0)
+	if (1)
 	{
 		ft_putstr_fd("\n", 1);
 		g_sig.ret = 130;
