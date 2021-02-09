@@ -27,7 +27,7 @@ int		*get_ordering(char **ms_environ, int size)
 	i = 0;
 	while (i < size - 1)
 	{
-		if (ms_environ[ret[i]][0] > ms_environ[ret[i + 1]][0])
+		if (ft_strcmp(ms_environ[ret[i]], ms_environ[ret[i + 1]]) > 0)
 		{
 			cache = ret[i + 1];
 			ret[i + 1] = ret[i];
