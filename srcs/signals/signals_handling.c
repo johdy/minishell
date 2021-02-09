@@ -15,15 +15,15 @@
 void	sigc(int mask)
 {
 	(void)mask;
-	if (1)
+	if (g_sig.fork != 0)
 	{
 		ft_putstr_fd("\n", 1);
 		g_sig.ret = 130;
 	}
 	else
 	{
-		ft_putstr_fd("\b\b  \b\b\nminishell > ", 1);
-		g_sig.ret = 1;
+		ft_putstr_fd("\nminishell > ", 1);
+		g_sig.ret = 130;
 	}
 }
 
