@@ -32,9 +32,7 @@ void	sigbs(int mask)
 	(void)mask;
 	if (g_sig.fork != 0)
 	{
-		ft_putstr_fd("Quit: ", 1);
-		ft_putnbr_fd(mask, 1);
-		ft_putstr_fd("\n", 1);
+		ft_putstr_fd("Quit (core dumped)\n", 1);
 		g_sig.ret = 131;
 	}
 	else
